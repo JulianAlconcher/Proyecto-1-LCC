@@ -1,11 +1,13 @@
 export function numberToColor(num) {
     switch (num) {
-        case 2: return "#249cd1";
-        case 4: return "#ec893b";
-        case 8: return "#e35b89";
-        case 16: return "#af4e7a";
-        case 32: return "#a63e4a";
+        case 2: return "#239cd1";
+        case 4: return "#ee8a3c";
+        case 8: return "#e25a88";
+        case 16: return "#ad4e7c";
+        case 32: return "#a63c4b";
         case 64: return "#8d6ebc";
+        case 128: return "#118182";
+        case 256: return "#52d5b2";
         default: return "black";
     }
 }

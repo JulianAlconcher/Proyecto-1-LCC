@@ -1,16 +1,18 @@
 body {
+  background-color: rgb(50, 50, 50);
   font: 14px "Century Gothic", Futura, sans-serif;
   margin: 20px;
 }
 
 .game {
+  background-color: rgb(50, 50, 50);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .header {
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid rgb(50, 50, 50);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,6 +20,7 @@ body {
 }
 
 .score {
+  color:white;
   margin: 10px;
   font-size: 25px;
 }
