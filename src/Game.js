@@ -69,6 +69,7 @@ function Game() {
     const gridS = JSON.stringify(grid);
     const pathS = JSON.stringify(path);
     const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
+    console.log(queryS);
     setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
