@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
-import { joinResult } from './util';
+import { joinResult, valueInPos } from './util';
 
 let pengine;
 
@@ -41,10 +41,25 @@ function Game() {
     if (waiting) {
       return;
     }
+    var SumRed = round(addPathInProgess(newPath));
+    console.log(SumRed);
     setPath(newPath);
     console.log(JSON.stringify(newPath));
   }
 
+  function addPathInProgess(newPath){
+    var suma = 0;
+    for (var i = 0; i < newPath.length; i++) {
+      suma = suma + valueInPos(newPath[i],grid,5);
+    }
+    return suma;
+  }
+
+
+  function round(num){
+    const log2num = Math.floor(Math.log2(num));
+    return Math.pow(2, log2num) === num ? num : Math.pow(2, log2num + 1);
+  }
   /**
    * Called when the user finished drawing a path in the grid.
    */
