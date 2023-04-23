@@ -6,9 +6,6 @@
  * join(+Grid, +NumOfColumns, +Path, -RGrids) 
  * RGrids es la lista de grillas representando el efecto, en etapas, de combinar las celdas del camino Path
  * en la grilla Grid, con número de columnas NumOfColumns. El número 0 representa que la celda está vacía. 
- 
-
-
 	join(Grid, _NumOfColumns, _Path, RGrids):-
 		Grid = [N | Resto],	% La implementación actual es simplemente a modo de muestra, y no tiene sentido, debe reepmplazarla
 		N2 is N * 2,		% por una implementación válida.
@@ -20,30 +17,36 @@ join(Grid, NumOfColumns, Path, RGrids):-
     lista_de_posiciones(Path,NumOfColumns,Posiciones),
     sort(Posiciones,PosicionesOrdenadas),
     convertir_en_ceros(Grid,PosicionesOrdenadas,GridEliminados,0),
-    %suma_valores(Grid,PosicionesOrdenadas,Suma),
+    suma_valores(Grid,PosicionesOrdenadas,Suma),
     ultimo(Ultimo,Posiciones),
-    convertir_en_ceros(GridEliminados,[Ultimo],GridSuma,256),
+    truncar_a_potencia_de_2(Suma, Resultado),
+    convertir_en_ceros(GridEliminados,[Ultimo],GridSuma,Resultado),
     RGrids=[GridEliminados,GridSuma].
     
-  % suma_valores(Grid,PosicionesOrdenadas,Suma):-
     
-   ultimo(X, [X]).
-   ultimo(X, [_|T]) :- ultimo(X, T).
+ultimo(X, [X]).
+ultimo(X, [_|T]) :- ultimo(X, T).
 
-   %suma_valores([], [], 0).
-   %suma_valores([X|L], [P|Ps], Suma) :-
-   % nth0(P, [X|L], Elemento), 
-    %suma_valores(L, Ps, Suma0), 
-   % Suma is Suma0 + Elemento.
+   
+suma_valores([], [], 0).
 
- %  suma_valores([_|L], P, Suma) :-
-   % suma_valores(L, P, Suma).
+suma_valores([X|L], [P|Ps], Suma) :-
+   	nth0(P, [X|L], Elemento), 
+    suma_valores([X|L], Ps, Suma0), 
+	Suma is Suma0 + Elemento.
+
+suma_valores([_|L], P, Suma) :-
+    suma_valores(L, P, Suma).
+
+truncar_a_potencia_de_2(N, Resultado) :-
+    Exponente is ceiling(log(N) / log(2)),  % calcular el exponente de la potencia de 2 y redondea para arriba
+    Resultado is 2 ** Exponente.
 
 
-   lista_de_posiciones([],_,[]).
+lista_de_posiciones([],_,[]).
    lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
-    P is Y+X*NumOfColumns,
-    lista_de_posiciones(Resto,NumOfColumns,Posiciones).
+        P is Y+X*NumOfColumns,
+        lista_de_posiciones(Resto,NumOfColumns,Posiciones).
 
               
 % Predicado para convertir en 0 una lista en varias posiciones
