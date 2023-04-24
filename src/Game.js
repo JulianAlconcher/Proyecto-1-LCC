@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
-import { joinResult, valueInPos } from './util';
+import { joinResult, numberToColor, valueInPos } from './util';
 
 let pengine;
 
@@ -11,6 +11,7 @@ function Game() {
   const [grid, setGrid] = useState(null);
   const [numOfColumns, setNumOfColumns] = useState(null);
   const [score, setScore] = useState(0);
+  const [PossiblePathAdd, setPossiblePathAdd] = useState(0);
   const [path, setPath] = useState([]);
   const [waiting, setWaiting] = useState(false);
 
@@ -41,8 +42,11 @@ function Game() {
     if (waiting) {
       return;
     }
-    var SumRed = round(addPathInProgess(newPath));
-    console.log(SumRed);
+    setPossiblePathAdd(round(addPathInProgess(newPath)));
+    var elem = document.getElementById('recuadro');
+    elem.style.backgroundColor  = numberToColor(PossiblePathAdd);
+    console.log("Score:" + PossiblePathAdd);
+    showPossibleScore(PossiblePathAdd);
     setPath(newPath);
     console.log(JSON.stringify(newPath));
   }
@@ -81,10 +85,10 @@ function Game() {
           RGrids
         ).
     */
+    setPossiblePathAdd(0);
     const gridS = JSON.stringify(grid);
     const pathS = JSON.stringify(path);
     const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
-    console.log(queryS);
     setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
@@ -97,6 +101,13 @@ function Game() {
     });
   }
 
+  function showPossibleScore(num){
+    return (
+      <div>
+        <h1>num</h1>
+      </div>
+    );
+  }
   /**
    * Displays each grid of the sequence as the current grid in 1sec intervals.
    * @param {number[][]} rGrids a sequence of grids.
@@ -119,7 +130,12 @@ function Game() {
   return (
     <div className="game">
       <div className="header">
-        <div className="score">{score}</div>
+        <div class="container">
+          <div className="score">{score}</div>
+          <div class="recuadro" id='recuadro' > 
+            <div className="suma">{PossiblePathAdd}</div>
+          </div>
+        </div>
       </div>
       <Board
         grid={grid}
