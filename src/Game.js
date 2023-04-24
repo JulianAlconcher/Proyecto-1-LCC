@@ -45,8 +45,8 @@ function Game() {
     setPossiblePathAdd(round(addPathInProgess(newPath)));
     var elem = document.getElementById('recuadro');
     elem.style.backgroundColor  = numberToColor(PossiblePathAdd);
+    elem.style.visibility = 'visible';
     console.log("Score:" + PossiblePathAdd);
-    showPossibleScore(PossiblePathAdd);
     setPath(newPath);
     console.log(JSON.stringify(newPath));
   }
@@ -86,6 +86,8 @@ function Game() {
         ).
     */
     setPossiblePathAdd(0);
+    var elem = document.getElementById('recuadro');
+    elem.style.visibility = 'hidden';
     const gridS = JSON.stringify(grid);
     const pathS = JSON.stringify(path);
     const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
@@ -99,14 +101,6 @@ function Game() {
         setWaiting(false);
       }
     });
-  }
-
-  function showPossibleScore(num){
-    return (
-      <div>
-        <h1>num</h1>
-      </div>
-    );
   }
   /**
    * Displays each grid of the sequence as the current grid in 1sec intervals.
