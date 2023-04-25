@@ -124,9 +124,9 @@ function Game() {
   return (
     <div className="game">
       <div className="header">
-        <div class="container">
+        <div className="container">
           <div className="score">{score}</div>
-          <div class="recuadro" id='recuadro' > 
+          <div className="recuadro" id='recuadro'> 
             <div className="suma">{PossiblePathAdd}</div>
           </div>
         </div>

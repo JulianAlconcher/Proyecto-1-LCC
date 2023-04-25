@@ -24,7 +24,7 @@ join(Grid, NumOfColumns, Path, RGrids):-
     obtener_columnas(GridSuma,Col1,Col2,Col3,Col4,Col5),
     renovar_Columna(Col1,ColRen1),renovar_Columna(Col2,ColRen2),renovar_Columna(Col3,ColRen3),renovar_Columna(Col4,ColRen4),renovar_Columna(Col5,ColRen5),
     nueva_lista(ColRen1,ColRen2,ColRen3,ColRen4,ColRen5,NUEVAGRID),
-    RGrids=[GridSuma,NUEVAGRID].
+    RGrids=[GridEliminados,NUEVAGRID].
     
     
 ultimo(X, [X]).
@@ -72,27 +72,27 @@ convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|R
     convertir_en_ceros_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
 
-    renovar_Columna(Lista,ListaNueva):-
-        eliminar_ceros(Lista,X),
-        completar_lista(X,ListaNueva).
+renovar_Columna(Lista,ListaNueva):-
+    eliminar_ceros(Lista,X),
+    completar_lista(X,ListaNueva).
     
-    eliminar_ceros([], []).
-    eliminar_ceros([0|T], L) :- eliminar_ceros(T, L).
-    eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
+eliminar_ceros([], []).
+eliminar_ceros([0|T], L) :- eliminar_ceros(T, L).
+eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
     
-    completar_lista(Lista, ListaCompleta) :-
-        length(Lista, Longitud),
-        Longitud >= 8,
-        ListaCompleta = Lista.
-    completar_lista(Lista, ListaCompleta) :-
-        length(Lista, Longitud),
-        Longitud < 8,
-        generar_numero_aleatorio(Num),
-        completar_lista([Num|Lista], ListaCompleta).
+completar_lista(Lista, ListaCompleta) :-
+    length(Lista, Longitud),
+    Longitud >= 8,
+    ListaCompleta = Lista.
+completar_lista(Lista, ListaCompleta) :-
+    length(Lista, Longitud),
+    Longitud < 8,
+    generar_numero_aleatorio(Num),
+    completar_lista([Num|Lista], ListaCompleta).
     
-    generar_numero_aleatorio(N) :-
-        random_between(1,6, R),
-        obtener_numero(R, N).
+generar_numero_aleatorio(N) :-
+    random_between(1,6, R),
+    obtener_numero(R, N).
     
     obtener_numero(1, 2).
     obtener_numero(2, 4).
@@ -101,18 +101,18 @@ convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|R
     obtener_numero(5, 32).
     obtener_numero(6, 64).
     
-    obtener_columnas([], [], [], [], [], []).
-    obtener_columnas([C1,C2,C3,C4,C5|Resto], [C1|Col1], [C2|Col2], [C3|Col3], [C4|Col4], [C5|Col5]) :-
-        obtener_columnas(Resto, Col1, Col2, Col3, Col4, Col5).
+obtener_columnas([], [], [], [], [], []).
+obtener_columnas([C1,C2,C3,C4,C5|Resto], [C1|Col1], [C2|Col2], [C3|Col3], [C4|Col4], [C5|Col5]) :-
+    obtener_columnas(Resto, Col1, Col2, Col3, Col4, Col5).
     
     
-    nueva_lista(L1, L2, L3, L4, L5, Resultado) :-
-        intercalar_listas(L1, L2, L3, L4, L5, [], Resultado).
+nueva_lista(L1, L2, L3, L4, L5, Resultado) :-
+    intercalar_listas(L1, L2, L3, L4, L5, [], Resultado).
     
-    intercalar_listas([], [], [], [], [], Resultado, Resultado).
-    intercalar_listas([X1|L1], [X2|L2], [X3|L3], [X4|L4], [X5|L5], Temp, Resultado) :-
-        append(Temp, [X1, X2, X3, X4, X5], NuevaLista),
-        intercalar_listas(L1, L2, L3, L4, L5, NuevaLista, Resultado).
+intercalar_listas([], [], [], [], [], Resultado, Resultado).
+intercalar_listas([X1|L1], [X2|L2], [X3|L3], [X4|L4], [X5|L5], Temp, Resultado) :-
+    append(Temp, [X1, X2, X3, X4, X5], NuevaLista),
+    intercalar_listas(L1, L2, L3, L4, L5, NuevaLista, Resultado).
 
  /**RGrids = [[0 | Ns], [0 |Ns] ,[N2 | Ns]].
        _Path = [[2,0],[3,0],[4,1],[3,1],[2,1]]
