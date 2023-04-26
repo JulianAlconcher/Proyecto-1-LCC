@@ -24,7 +24,7 @@ join(Grid, NumOfColumns, Path, RGrids):-
     obtener_columnas(GridSuma,Col1,Col2,Col3,Col4,Col5),
     renovar_Columna(Col1,ColRen1),renovar_Columna(Col2,ColRen2),renovar_Columna(Col3,ColRen3),renovar_Columna(Col4,ColRen4),renovar_Columna(Col5,ColRen5),
     nueva_lista(ColRen1,ColRen2,ColRen3,ColRen4,ColRen5,NUEVAGRID),
-    RGrids=[GridEliminados,NUEVAGRID].
+    RGrids=[GridSuma,NUEVAGRID].
     
     
 ultimo(X, [X]).

@@ -11,9 +11,12 @@ function Game() {
   const [grid, setGrid] = useState(null);
   const [numOfColumns, setNumOfColumns] = useState(null);
   const [score, setScore] = useState(0);
+  const [texto, setTexto] = useState("");
   const [PossiblePathAdd, setPossiblePathAdd] = useState(0);
   const [path, setPath] = useState([]);
   const [waiting, setWaiting] = useState(false);
+  var elem = document.getElementById('recuadro');
+  const boton = document.querySelector('#boton');
 
   useEffect(() => {
     // This is executed just once, after the first render.
@@ -44,8 +47,10 @@ function Game() {
     }
     setPossiblePathAdd(round(addPathInProgess(newPath)));
     var elem = document.getElementById('recuadro');
+    if (elem) {
     elem.style.backgroundColor  = numberToColor(PossiblePathAdd);
     elem.style.visibility = 'visible';
+    }
     console.log("Score:" + PossiblePathAdd);
     setPath(newPath);
     console.log(JSON.stringify(newPath));
@@ -58,7 +63,13 @@ function Game() {
     }
     return suma;
   }
-
+  
+  if(boton!=null)
+  boton.addEventListener("click", 
+  function() {
+    elem.style.visibility = 'hidden';
+    setTexto("El Booster Fue Activado!");
+  });
 
   function round(num){
     const log2num = Math.floor(Math.log2(num));
@@ -86,7 +97,6 @@ function Game() {
         ).
     */
     setPossiblePathAdd(0);
-    var elem = document.getElementById('recuadro');
     elem.style.visibility = 'hidden';
     const gridS = JSON.stringify(grid);
     const pathS = JSON.stringify(path);
@@ -97,6 +107,7 @@ function Game() {
         setScore(score + joinResult(path, grid, numOfColumns));
         setPath([]);
         animateEffect(response['RGrids']);
+        setTexto("");
       } else {
         setWaiting(false);
       }
@@ -138,6 +149,8 @@ function Game() {
         onPathChange={onPathChange}
         onDone={onPathDone}
       />
+      <p className="textoDeBooster" id='boosterActivado'>{texto}</p>
+      <button className="boton" id='boton'> Booster</button>
     </div>
   );
 }

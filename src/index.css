@@ -1,9 +1,9 @@
 body {
   background-color: rgb(50, 50, 50);
   font: 14px "Century Gothic", Futura, sans-serif;
-  transform: scale(0.90);
+  /*transform: scale(0.90);*/
   overflow: hidden;
-  margin: 0%;
+  margin: 1%;
 }
 
 .game {
@@ -11,7 +11,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 0%;
   
 }
 
@@ -19,10 +18,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 .container {
-  display: block;
+  display:inline-block;
   justify-content: center;
   align-items: center;
   margin-top: 0%;
@@ -35,28 +35,38 @@ body {
   text-align: center;
 }
 
+.textoDeBooster{
+  color:white;
+  font-size: 15px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 1vh;
+  white-space: nowrap;
+  bottom: 0vh;
+  
+}
+
 .recuadro{
   padding: 15px;
-  width: 30px;
-  height: 30px;
-  justify-content: center;
   align-items: center;
   border-radius: 10%;
   visibility: hidden;
-  margin-top: 6px;
+  transform: scale(0.9);
 }
 .suma{
   color:rgb(255, 255, 255);
-  font-size: 20px;
-  text-align: center;
-  text-align: justify;
+  font-size: 18px;
   display: inline-block;
+  justify-content: center;
+  text-align: center;
 }
 
 .board {
-  margin: 20px;
+  margin: 0vh;
   position: relative;
-  margin-top: 1%;
+  transform: scale(0.90);
+  margin-top: -3vh;
 }
 
 .squares {
@@ -69,8 +79,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 5px;
-  border-radius: 5px;
+  margin: .6vh;
+  border-radius: 1vh;
   font-size: 25px;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -98,7 +108,6 @@ body {
   top: 0;
   margin: 40px 0;
   display: grid;  
-  transition: 2s;
 }
 
 .slashConnectors, .backslashConnectors {
@@ -112,13 +121,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;  
-  transition: 2s;
 }
 
 .connectorLine {
   flex-grow: 1;
   height: 8px;
-  transition: .1s;
 }
 
 .connectorLine.vertical {
@@ -131,4 +138,21 @@ body {
 
 .connectorLine.backslash {
   transform: rotate(45deg);
+}
+
+.boton {
+  position:relative;
+  left: 40vh;
+  bottom: 50vh;
+  border-radius: 4px;
+  background-color: #239cd1;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+.boton:hover {
+  background-color: #ff6666;
+  transform:scale(1.06);
 }
