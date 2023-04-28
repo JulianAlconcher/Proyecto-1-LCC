@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 import { joinResult, numberToColor, valueInPos } from './util';
+import soundBlock from "./SoundFx/selectionSound.mp3"
+import soundSucces from "./SoundFx/Succes.mp3"
+//import soundBooster from "./SoundFx/BoosterFx.mp3"
 
 let pengine;
 
@@ -54,6 +57,7 @@ function Game() {
     console.log("Score:" + PossiblePathAdd);
     setPath(newPath);
     console.log(JSON.stringify(newPath));
+    playSound(soundBlock);
   }
 
   function addPathInProgess(newPath){
@@ -69,11 +73,16 @@ function Game() {
   function() {
     elem.style.visibility = 'hidden';
     setTexto("El Booster Fue Activado!");
+    //playSound(soundBooster)
   });
 
   function round(num){
     const log2num = Math.floor(Math.log2(num));
     return Math.pow(2, log2num) === num ? num : Math.pow(2, log2num + 1);
+  }
+
+  function playSound(sonido) {
+    new Audio(sonido).play()
   }
   /**
    * Called when the user finished drawing a path in the grid.
@@ -102,6 +111,7 @@ function Game() {
     const pathS = JSON.stringify(path);
     const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
     setWaiting(true);
+    playSound(soundSucces);
     pengine.query(queryS, (success, response) => {
       if (success) {
         setScore(score + joinResult(path, grid, numOfColumns));
@@ -150,7 +160,7 @@ function Game() {
         onDone={onPathDone}
       />
       <p className="textoDeBooster" id='boosterActivado'>{texto}</p>
-      <button className="boton" id='boton'> Booster</button>
+      <button className="boton" id='boton'> Booster</button>     
     </div>
   );
 }

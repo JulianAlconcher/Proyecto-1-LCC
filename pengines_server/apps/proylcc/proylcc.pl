@@ -22,7 +22,13 @@ join(Grid, NumOfColumns, Path, RGrids):-
     truncar_a_potencia_de_2(Suma, Resultado),
     convertir_en_ceros(GridEliminados,[Ultimo],GridSuma,Resultado),
     obtener_columnas(GridSuma,Col1,Col2,Col3,Col4,Col5),
-    renovar_Columna(Col1,ColRen1),renovar_Columna(Col2,ColRen2),renovar_Columna(Col3,ColRen3),renovar_Columna(Col4,ColRen4),renovar_Columna(Col5,ColRen5),
+    
+    renovar_Columna(Col1,ColRen1,NumOfColumns,Grid),
+    renovar_Columna(Col2,ColRen2,NumOfColumns,Grid),
+    renovar_Columna(Col3,ColRen3,NumOfColumns,Grid),
+    renovar_Columna(Col4,ColRen4,NumOfColumns,Grid),
+    renovar_Columna(Col5,ColRen5,NumOfColumns,Grid),
+
     nueva_lista(ColRen1,ColRen2,ColRen3,ColRen4,ColRen5,NUEVAGRID),
     RGrids=[GridSuma,NUEVAGRID].
     
@@ -47,9 +53,9 @@ truncar_a_potencia_de_2(N, Resultado) :-
 
 
 lista_de_posiciones([],_,[]).
-   lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
-        P is Y+X*NumOfColumns,
-        lista_de_posiciones(Resto,NumOfColumns,Posiciones).
+lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
+    P is Y+X*NumOfColumns,
+    lista_de_posiciones(Resto,NumOfColumns,Posiciones).
 
               
 % Predicado para convertir en 0 una lista en varias posiciones
@@ -72,28 +78,29 @@ convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|R
     convertir_en_ceros_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
 
-renovar_Columna(Lista,ListaNueva):-
+renovar_Columna(Lista,ListaNueva,NumOfColumns,Grid):-
     eliminar_ceros(Lista,X),
-    completar_lista(X,ListaNueva).
+    completar_lista(X,ListaNueva,NumOfColumns,Grid).
     
 eliminar_ceros([], []).
 eliminar_ceros([0|T], L) :- eliminar_ceros(T, L).
 eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
     
-completar_lista(Lista, ListaCompleta) :-
+completar_lista(Lista, ListaCompleta,NumOfColumns,Grid) :-
     length(Lista, Longitud),
-    Longitud >= 8,
+    obtener_cant_filas(Grid,NumOfColumns,CantFilas),
+    Longitud >= CantFilas,
     ListaCompleta = Lista.
-completar_lista(Lista, ListaCompleta) :-
+completar_lista(Lista, ListaCompleta,NumOfColumns,Grid) :-
     length(Lista, Longitud),
-    Longitud < 8,
+    obtener_cant_filas(Grid,NumOfColumns,CantFilas),
+    Longitud < CantFilas,
     generar_numero_aleatorio(Num),
-    completar_lista([Num|Lista], ListaCompleta).
+    completar_lista([Num|Lista], ListaCompleta,NumOfColumns,Grid).
     
 generar_numero_aleatorio(N) :-
     random_between(1,6, R),
     obtener_numero(R, N).
-    
     obtener_numero(1, 2).
     obtener_numero(2, 4).
     obtener_numero(3, 8).
@@ -114,6 +121,15 @@ intercalar_listas([X1|L1], [X2|L2], [X3|L3], [X4|L4], [X5|L5], Temp, Resultado) 
     append(Temp, [X1, X2, X3, X4, X5], NuevaLista),
     intercalar_listas(L1, L2, L3, L4, L5, NuevaLista, Resultado).
 
+long([],0).
+long([_|Xs],L) :- long(Xs,L1), L is L1+1.
+
+obtener_cant_filas(Lista, NumColumnas, NumFilas) :-
+    long(Lista, Longitud),
+    NumFilas is Longitud // NumColumnas.
+
+    
+
  /**RGrids = [[0 | Ns], [0 |Ns] ,[N2 | Ns]].
        _Path = [[2,0],[3,0],[4,1],[3,1],[2,1]]
 join([64,4,64,32,16,
@@ -125,6 +141,4 @@ join([64,4,64,32,16,
      64,2,64,32,64,
      32,2,64,32,4],
 */
-
-
 
