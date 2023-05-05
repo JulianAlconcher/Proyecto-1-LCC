@@ -158,16 +158,142 @@ convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|R
         NumFilas is Longitud // NumColumnas.    
 
     
+        booster(Pos, Grid, _,_, ListaPath, ListaRetornar) :-
+            length(Grid, Length),
+            Pos >= Length,
+            ListaRetornar = ListaPath.
+      
+        booster(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath,ListaRetornar):-
+            obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados),
+            append(ListaPath,Path,ListaNueva),
+            PosNueva is Pos+1,
+            append(ListaVisitados,[Pos],ListaVisitadosN),
+            booster(PosNueva,Grid,NumOfColumns,ListaVisitadosN,ListaNueva,ListaRetornar).
+      
+      
+      
+        obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados):-
+            findall(X,(ady(Pos,Grid,NumOfColumns,ListaVisitados,X)),Path).
+      
+        %Caso Izquierda Arriba 1°
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            X is (Pos mod NumOfColumns),
+            X \= 0, 
+            Posicion_ady is Pos-(NumOfColumns+1),
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+           not(member(Posicion_ady, ListaVisitados)),
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+        %Caso Arriba 2°
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            Posicion_ady is Pos-NumOfColumns,
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+           not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+      
+        %Caso Derecha Arriba 3°
+      
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            X is (Pos mod NumOfColumns) - (NumOfColumns-1),
+            X \= 0, 
+            Posicion_ady is Pos-(NumOfColumns-1),
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+           not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+        %Caso Izquierda 4°
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            X is (Pos mod NumOfColumns),
+            X \= 0,  
+            Posicion_ady is Pos-1,
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+           not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+      
+        %Caso Derecha 5°
+      
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            X is (Pos mod NumOfColumns) - (NumOfColumns-1),
+            X \= 0, 
+            Posicion_ady is Pos+1,
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+           not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+        %Caso Izquierda Abajo 6°
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            X is (Pos mod NumOfColumns),
+            X \= 0,
+            Posicion_ady is Pos+(NumOfColumns-1),
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+          not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+        %Caso Abajo 7°
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            Posicion_ady is Pos+NumOfColumns,
+            nth0(Pos,Grid,Elem), 
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady, 
+           not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
+      
+        %Caso Derecha Abajo 8°
+      
+        ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
+            X is (Pos mod NumOfColumns) - (NumOfColumns-1),
+            X \= 0, 
+            Posicion_ady is Pos+(NumOfColumns+1),
+            nth0(Pos,Grid,Elem),
+            nth0(Posicion_ady,Grid,Ady),
+            Elem =:= Ady,
+            not(member(Posicion_ady, ListaVisitados)), 
+            append([Pos,Posicion_ady],[],ListaPath).
 
- /**RGrids = [[0 | Ns], [0 |Ns] ,[N2 | Ns]].
-       _Path = [[2,0],[3,0],[4,1],[3,1],[2,1]]
-join([64,4,64,32,16,
-     64,8,16,2,32,
-     2,4,64,64,2,
-     2,4,32,16,4,
-     16,4,16,16,16,
-     16,64,2,32,32,
-     64,2,64,32,64,
-     32,2,64,32,4],
-*/
 
+
+            agrupar_sublistas([],ListaResultado,ListaResultado).
+
+            agrupar_sublistas([[X,Y]|Resto],ListaRetorno,ListaResultado):-
+                not(esta_en_la_lista(Y,ListaRetorno)),
+                encontrar_transitivos([X,Y],Resto,[X,Y],Resul),
+                agrupar_sublistas(Resto,[Resul|ListaRetorno],ListaResultado).
+            
+            agrupar_sublistas([_|Resto],ListaRetorno,ListaResultado):-
+                agrupar_sublistas(Resto,ListaRetorno,ListaResultado).
+            
+            
+            encontrar_transitivos(_,[],X,X).
+            
+            encontrar_transitivos([_,Y],[[X1,Y1]|Resto],Path,Resultado):-
+                Y=:=X1,
+                append(Path,[Y1],NuevoPath),
+                encontrar_transitivos([X1,Y1],Resto,NuevoPath,Resultado).
+            
+            encontrar_transitivos([X,_],[[X1,Y1]|Resto],Path,Resultado):-
+                X=:=X1,
+                append(Path,[Y1],NuevoPath),
+                encontrar_transitivos([X1,Y1],Resto,NuevoPath,Resultado).
+            
+            encontrar_transitivos([X,Y],[_|Resto],Path,Resultado):-
+                encontrar_transitivos([X,Y],Resto,Path,Resultado).
+            
+            
+            esta_en_la_lista(Elemento, ListaSublistas) :-
+                append(ListaSublistas, ListaAplanada),
+                member(Elemento, ListaAplanada).
+            
