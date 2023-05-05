@@ -18,8 +18,6 @@ function Game() {
   const [PossiblePathAdd, setPossiblePathAdd] = useState(0);
   const [path, setPath] = useState([]);
   const [waiting, setWaiting] = useState(false);
-  var elem = document.getElementById('recuadro');
-  const boton = document.querySelector('#boton');
 
   useEffect(() => {
     // This is executed just once, after the first render.
@@ -49,11 +47,6 @@ function Game() {
       return;
     }
     setPossiblePathAdd(round(addPathInProgess(newPath)));
-    var elem = document.getElementById('recuadro');
-    if (elem) {
-    elem.style.backgroundColor  = numberToColor(PossiblePathAdd);
-    elem.style.visibility = 'visible';
-    }
     console.log("Score:" + PossiblePathAdd);
     setPath(newPath);
     console.log(JSON.stringify(newPath));
@@ -68,14 +61,6 @@ function Game() {
     return suma;
   }
   
-  if(boton!=null)
-  boton.addEventListener("click", 
-  function() {
-    elem.style.visibility = 'hidden';
-    setTexto("El Booster Fue Activado!");
-    booster();
-    //playSound(soundBooster)
-  });
 
   function round(num){
     const log2num = Math.floor(Math.log2(num));
@@ -107,7 +92,6 @@ function Game() {
         ).
     */
     setPossiblePathAdd(0);
-    elem.style.visibility = 'hidden';
     const gridS = JSON.stringify(grid);
     const pathS = JSON.stringify(path);
     const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
@@ -130,21 +114,13 @@ function Game() {
    */
    function booster() {
     setPossiblePathAdd(0);
-    elem.style.visibility = 'hidden';
     const gridS = JSON.stringify(grid);
-    const pathS = JSON.stringify(path);
-    const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
+    const queryS = "booster(" + gridS + "," + numOfColumns + ", RGrids)";
     setWaiting(true);
-    playSound(soundSucces);
     pengine.query(queryS, (success, response) => {
-      if (success) {
-        setScore(score + joinResult(path, grid, numOfColumns));
-        setPath([]);
-        animateEffect(response['RGrids']);
-        setTexto("");
-      } else {
-        setWaiting(false);
-      }
+      if (success) {animateEffect(response['RGrids']);} 
+      
+      else {setWaiting(false);}
     });
   }
 
@@ -172,7 +148,12 @@ function Game() {
       <div className="header">
         <div className="container">
           <div className="score">{score}</div>
-          <div className="recuadro" id='recuadro'> 
+          <div className="recuadro" id='recuadro' style={{
+            backgroundColor  : numberToColor(PossiblePathAdd),
+            visibility : path.length>0
+          }
+
+          }> 
             <div className="suma">{PossiblePathAdd}</div>
           </div>
         </div>
@@ -184,8 +165,13 @@ function Game() {
         onPathChange={onPathChange}
         onDone={onPathDone}
       />
-      <p className="textoDeBooster" id='boosterActivado'>{texto}</p>
-      <button className="boton" id='boton'> BOOST</button>     
+      <p className="textoDeBooster" id='boosterActivado' >{texto}</p>
+      <button className="boton" id='boton' onClick={
+        () => {
+          setTexto("El Booster Fue Activado!");
+          booster();
+        }
+      }> BOOST</button>     
     </div>
   );
 }

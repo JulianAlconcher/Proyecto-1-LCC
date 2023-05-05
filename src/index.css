@@ -50,7 +50,6 @@ body {
   padding: 15px;
   align-items: center;
   border-radius: 10%;
-  visibility: hidden;
   transform: scale(0.9);
 }
 .suma{
