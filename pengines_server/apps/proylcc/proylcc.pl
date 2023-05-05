@@ -6,12 +6,8 @@
  * join(+Grid, +NumOfColumns, +Path, -RGrids) 
  * RGrids es la lista de grillas representando el efecto, en etapas, de combinar las celdas del camino Path
  * en la grilla Grid, con número de columnas NumOfColumns. El número 0 representa que la celda está vacía. 
-	join(Grid, _NumOfColumns, _Path, RGrids):-
-		Grid = [N | Resto],	% La implementación actual es simplemente a modo de muestra, y no tiene sentido, debe reepmplazarla
-		N2 is N * 2,		% por una implementación válida.
-		RGrids = [[0 | Resto], [N2 | Resto]].
-*/
-	
+ * A partir de un path dado, calcula la suma final truncando a una potencia de dos y retorna una nueva grid. 
+*/	
 join(Grid, NumOfColumns, Path, RGrids):-
     lista_de_posiciones(Path,NumOfColumns,Posiciones),
     sort(Posiciones,PosicionesOrdenadas),
@@ -26,26 +22,25 @@ join(Grid, NumOfColumns, Path, RGrids):-
     intercalar(ListaRenovada,[],NUEVAGRID),
     RGrids=[GridSuma,NUEVAGRID].
     
-    
+% Retorna el ultimo elemento de una lista dada.     
 ultimo(X, [X]).
 ultimo(X, [_|T]) :- ultimo(X, T).
 
-   
+% Calcula la suma de todos los elementos de una lista. 
 suma_valores([], [], 0).
-
 suma_valores([X|L], [P|Ps], Suma) :-
    	nth0(P, [X|L], Elemento), 
     suma_valores([X|L], Ps, Suma0), 
 	Suma is Suma0 + Elemento.
-
 suma_valores([_|L], P, Suma) :-
     suma_valores(L, P, Suma).
 
+% Realiza un redondeo hacia arriba de potencias de dos. 
 truncar_a_potencia_de_2(N, Resultado) :-
     Exponente is ceiling(log(N) / log(2)),  % calcular el exponente de la potencia de 2 y redondea para arriba
     Resultado is 2 ** Exponente.
 
-
+% Dado un path, convierte y retorna las coordenadas X,Y en posiciones de una lista. 
 lista_de_posiciones([],_,[]).
 lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
     P is Y+X*NumOfColumns,
@@ -56,53 +51,59 @@ lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
 convertir_en_ceros(Lista, Posiciones, NuevaLista,Valor) :-
     convertir_en_ceros_aux(Lista, Posiciones, 0, NuevaLista,Valor).
 
-% Caso base: hemos terminado de recorrer la lista y no hay más posiciones a modificar
+% Predicado que convierte todos los elementos de una lista en ceros. 
 convertir_en_ceros_aux(Lista, [], _, Lista,_).
 
-% Caso recursivo: la posición actual está en la lista de posiciones a modificar
 convertir_en_ceros_aux([_|Resto], [Posicion|RestoPosiciones], PosicionActual, [Valor|RestoNuevaLista],Valor) :-
     PosicionActual =:= Posicion,
     NuevaPosicionActual is PosicionActual + 1,
     convertir_en_ceros_aux(Resto, RestoPosiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
-% Caso recursivo: la posición actual no está en la lista de posiciones a modificar
 convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|RestoNuevaLista],Valor) :-
     \+ member(PosicionActual, Posiciones),
     NuevaPosicionActual is PosicionActual + 1,
     convertir_en_ceros_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
+% Predicado que dada una matriz la divide en columnas y retorna una lista.
 obtener_lista_columnas(Grilla,NumOfColumns,ListaColumnas):-
     crear_lista_columnas(NumOfColumns,ListaVacia),
     obtener_X_Primeros(Grilla,NumOfColumns,X_Primeros),
     insertar_en_columnas(X_Primeros,ListaVacia,ListaColumnas).
-    
+
+% Predicado que inserta elementos en columnas. 
 insertar_en_columnas([], Resultado, Resultado).
 insertar_en_columnas([X|Xs], L, Resultado):-
     insertar_elementos(X, L, ListaAux),
     insertar_en_columnas(Xs, ListaAux, Resultado).
 
+% Predicado que inserta elementos en una lista. 
 insertar_elementos([], Ls, Ls).
 insertar_elementos([X|Xs], [L|Ls], [L2|Ls2]) :-
     append(L, [X], L2),
     insertar_elementos(Xs, Ls, Ls2).
 
+% Predicado que crea una lista de sublistas.
 crear_lista_columnas(0, []).
-    crear_lista_columnas(NumOfColumns, [ [] | ListaColumnas ]) :-
-    AUX is NumOfColumns - 1,
-    crear_lista_columnas(AUX, ListaColumnas).
 
+crear_lista_columnas(NumOfColumns, [ [] | ListaColumnas ]) :-
+        AUX is NumOfColumns - 1,
+        crear_lista_columnas(AUX, ListaColumnas).
+
+% Predicado que retorna los X elementos primeros de una lista.
 obtener_X_Primeros([], _, []).
 obtener_X_Primeros([H|T], NumOfColumns, [Col|Cols]) :-
     length(Col, NumOfColumns),
     append(Col, Rest, [H|T]),
     obtener_X_Primeros(Rest, NumOfColumns, Cols).
 
+% Predicado que actualiza los valores de una lista, retornando una nueva version de la lista pasada por parametro.
 renovar_Columnas([],[],_).
 renovar_Columnas([L|Ls],[L2|Ls2],CantFilas):-
     eliminar_ceros(L,X),
     completar_lista(X,L2,CantFilas),
     renovar_Columnas(Ls,Ls2,CantFilas).
 
+% Predicado que completa a la lista entregada con elementos con numero aleatorio.
 completar_lista(Lista, ListaCompleta,CantFilas) :-
     length(Lista, Longitud),
     Longitud >= CantFilas,
@@ -112,8 +113,9 @@ completar_lista(Lista, ListaCompleta,CantFilas) :-
     Longitud < CantFilas,
     generar_numero_aleatorio(Num),
     completar_lista([Num|Lista], ListaCompleta,CantFilas).
-    
-    generar_numero_aleatorio(N) :-
+
+% Predicado que retorna un numero aleatorio. 
+generar_numero_aleatorio(N) :-
     random_between(1,6, R),
     obtener_numero(R, N).
     obtener_numero(1, 2).
@@ -123,10 +125,12 @@ completar_lista(Lista, ListaCompleta,CantFilas) :-
     obtener_numero(5, 32).
     obtener_numero(6, 64).
 
+% Predicado que dada una lista de numeros, elimina todas las apariciones de ceros de la misma.  
 eliminar_ceros([], []).
 eliminar_ceros([0|T], L) :- eliminar_ceros(T, L).
 eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
 
+% Predicado que intercala sublistas y retorna una lista coneteniendo a las sublistas intercaladas. 
 intercalar([], Res, R):-
     reverse(Res,R).
 intercalar([[]|Xs],Res,R) :-
@@ -152,23 +156,25 @@ concatenar([], L, L).
 concatenar([X|L1], L2, [X|L3]) :-
     concatenar(L1, L2, L3).
 
-
+%Predicado que retorna la cantidad de filas de la matriz GRID.
 obtener_cant_filas(Grid, NumColumnas, NumFilas) :-
     length(Grid, Longitud),
     NumFilas is Longitud // NumColumnas.    
 
     
-%Metodo booster
+%Metodo booster que retorna una grid con todos los caminos adyacentes calculados.
 booster(Grid,NumOfColumns,RGrids):-
     adyacentes(0,Grid,NumOfColumns,[],[],ListaARetornar),
     agrupar_sublistas(ListaARetornar,[],ListaResultado),
     join_de_sublistas(Grid,NumOfColumns,ListaResultado,GridBooster),
+
     obtener_lista_columnas(GridBooster,NumOfColumns,ListaColumnas),
     obtener_cant_filas(GridBooster,NumOfColumns,CantidadFilas),
     renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
     intercalar(ListaRenovada,[],NUEVAGRID),
     RGrids=[GridBooster,NUEVAGRID].
 
+% Predicado que para cada sublista de una lista calcula la suma del camino.
 join_de_sublistas(X,_,[],X).
 
 join_de_sublistas(Grid,NumOfColumns,[L|Resto],RGrids):-
@@ -221,7 +227,6 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
 
 
 %Caso Derecha Arriba 3°
-
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     X is (Pos mod NumOfColumns) - (NumOfColumns-1),
     X \= 0, 
@@ -245,7 +250,6 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
 
 
 %Caso Derecha 5°
-
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     X is (Pos mod NumOfColumns) - (NumOfColumns-1),
     X \= 0, 

@@ -61,7 +61,6 @@ function Game() {
     return suma;
   }
   
-
   function round(num){
     const log2num = Math.floor(Math.log2(num));
     return Math.pow(2, log2num) === num ? num : Math.pow(2, log2num + 1);
@@ -150,10 +149,7 @@ function Game() {
           <div className="score">{score}</div>
           <div className="recuadro" id='recuadro' style={{
             backgroundColor  : numberToColor(PossiblePathAdd),
-            visibility : path.length>0
-          }
-
-          }> 
+            visibility : path.length>0}}> 
             <div className="suma">{PossiblePathAdd}</div>
           </div>
         </div>
