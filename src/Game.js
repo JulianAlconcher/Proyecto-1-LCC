@@ -73,6 +73,7 @@ function Game() {
   function() {
     elem.style.visibility = 'hidden';
     setTexto("El Booster Fue Activado!");
+    booster();
     //playSound(soundBooster)
   });
 
@@ -123,6 +124,30 @@ function Game() {
       }
     });
   }
+
+   /**
+   * Called when the user clicked booster button.
+   */
+   function booster() {
+    setPossiblePathAdd(0);
+    elem.style.visibility = 'hidden';
+    const gridS = JSON.stringify(grid);
+    const pathS = JSON.stringify(path);
+    const queryS = "join(" + gridS + "," + numOfColumns + "," + pathS + ", RGrids)";
+    setWaiting(true);
+    playSound(soundSucces);
+    pengine.query(queryS, (success, response) => {
+      if (success) {
+        setScore(score + joinResult(path, grid, numOfColumns));
+        setPath([]);
+        animateEffect(response['RGrids']);
+        setTexto("");
+      } else {
+        setWaiting(false);
+      }
+    });
+  }
+
   /**
    * Displays each grid of the sequence as the current grid in 1sec intervals.
    * @param {number[][]} rGrids a sequence of grids.
@@ -160,7 +185,7 @@ function Game() {
         onDone={onPathDone}
       />
       <p className="textoDeBooster" id='boosterActivado'>{texto}</p>
-      <button className="boton" id='boton'> Booster</button>     
+      <button className="boton" id='boton'> BOOST</button>     
     </div>
   );
 }
