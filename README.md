@@ -3,4 +3,5 @@ El 2248 es un juego de puzzle y estrategia cuyo objetivo es combinar bloques num
 
 Su implementacion fue realizada con React para el frontend y Prolog manejando la logica del juego. 
 
-[Captura de pantalla 2023-05-06 171650](https://user-images.githubusercontent.com/111883752/236645363-18ad3546-4844-4df6-bbf8-427d90d2bb0d.png)
+
+![Captura de pantalla 2023-05-06 171650](https://user-images.githubusercontent.com/111883752/236645415-79e3ec58-5942-4383-9a6f-418385417b1c.png)
