@@ -22,11 +22,11 @@ join(Grid, NumOfColumns, Path, RGrids):-
     intercalar(ListaRenovada,[],NUEVAGRID),
     RGrids=[GridSuma,NUEVAGRID].
     
-% Retorna el ultimo elemento de una lista dada.     
+% Predica que retorna el ultimo elemento de una lista dada.     
 ultimo(X, [X]).
 ultimo(X, [_|T]) :- ultimo(X, T).
 
-% Calcula la suma de todos los elementos de una lista. 
+% Predicado que calcula la suma de todos los elementos de una lista. 
 suma_valores([], [], 0).
 suma_valores([X|L], [P|Ps], Suma) :-
    	nth0(P, [X|L], Elemento), 
@@ -35,12 +35,12 @@ suma_valores([X|L], [P|Ps], Suma) :-
 suma_valores([_|L], P, Suma) :-
     suma_valores(L, P, Suma).
 
-% Realiza un redondeo hacia arriba de potencias de dos. 
+% Predicado que realiza un redondeo hacia arriba de potencias de dos. 
 truncar_a_potencia_de_2(N, Resultado) :-
-    Exponente is ceiling(log(N) / log(2)),  % calcular el exponente de la potencia de 2 y redondea para arriba
+    Exponente is ceiling(log(N) / log(2)), 
     Resultado is 2 ** Exponente.
 
-% Dado un path, convierte y retorna las coordenadas X,Y en posiciones de una lista. 
+% Predicado que dado un path de posiciones X,Y, convierte y retorna las coordenadas X,Y en posiciones de una lista. 
 lista_de_posiciones([],_,[]).
 lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
     P is Y+X*NumOfColumns,
@@ -53,12 +53,10 @@ convertir_en_ceros(Lista, Posiciones, NuevaLista,Valor) :-
 
 % Predicado que convierte todos los elementos de una lista en ceros. 
 convertir_en_ceros_aux(Lista, [], _, Lista,_).
-
 convertir_en_ceros_aux([_|Resto], [Posicion|RestoPosiciones], PosicionActual, [Valor|RestoNuevaLista],Valor) :-
     PosicionActual =:= Posicion,
     NuevaPosicionActual is PosicionActual + 1,
     convertir_en_ceros_aux(Resto, RestoPosiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
-
 convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|RestoNuevaLista],Valor) :-
     \+ member(PosicionActual, Posiciones),
     NuevaPosicionActual is PosicionActual + 1,
@@ -130,7 +128,7 @@ eliminar_ceros([], []).
 eliminar_ceros([0|T], L) :- eliminar_ceros(T, L).
 eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
 
-% Predicado que intercala sublistas y retorna una lista coneteniendo a las sublistas intercaladas. 
+% Predicado que intercala sublistas y retorna una lista conteniendo a las sublistas intercaladas. 
 intercalar([], Res, R):-
     reverse(Res,R).
 intercalar([[]|Xs],Res,R) :-
@@ -176,11 +174,11 @@ booster(Grid,NumOfColumns,RGrids):-
 
 % Predicado que para cada sublista de una lista calcula la suma del camino.
 join_de_sublistas(X,_,[],X).
-
 join_de_sublistas(Grid,NumOfColumns,[L|Resto],RGrids):-
     join_booster(Grid,NumOfColumns,L,GridSuma),
     join_de_sublistas(GridSuma,NumOfColumns,Resto,RGrids).
 
+% Predicado que convierte en cero el camino y coloca en el ultimo lugar la suma resultante.
 join_booster(Grid, _, Lista, GridSuma):-
     sort(Lista,PosicionesOrdenadas),
     convertir_en_ceros(Grid,PosicionesOrdenadas,GridEliminados,0),
@@ -194,7 +192,6 @@ adyacentes(Pos, Grid, _,_, ListaPath, ListaRetornar) :-
     length(Grid, Length),
     Pos >= Length,
     ListaRetornar = ListaPath.
-
 adyacentes(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath,ListaRetornar):-
     obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados),
     append(ListaPath,Path,ListaNueva),
@@ -202,6 +199,7 @@ adyacentes(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath,ListaRetornar):-
     append(ListaVisitados,[Pos],ListaVisitadosN),
     adyacentes(PosNueva,Grid,NumOfColumns,ListaVisitadosN,ListaNueva,ListaRetornar).
 
+%Predicado que retorna todos los nodos adyacentes a una posicion.
 obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados):-
     findall(X,(ady(Pos,Grid,NumOfColumns,ListaVisitados,X)),Path).
 
@@ -291,33 +289,29 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     not(member(Posicion_ady, ListaVisitados)), 
     append([Pos,Posicion_ady],[],ListaPath).
 
+%Predicado que dada una lista por parametro, agrupa las sublistas.
 agrupar_sublistas([],ListaResultado,ListaResultado).
-
 agrupar_sublistas([[X,Y]|Resto],ListaRetorno,ListaResultado):-
     not(esta_en_la_lista(Y,ListaRetorno)),
     encontrar_transitivos([X,Y],Resto,[X,Y],Resul),
     agrupar_sublistas(Resto,[Resul|ListaRetorno],ListaResultado).
-
 agrupar_sublistas([_|Resto],ListaRetorno,ListaResultado):-
     agrupar_sublistas(Resto,ListaRetorno,ListaResultado).
 
-
+%Predicado que encuentra pares transitivos.
 encontrar_transitivos(_,[],X,X).
-
 encontrar_transitivos([_,Y],[[X1,Y1]|Resto],Path,Resultado):-
     Y=:=X1,
     append(Path,[Y1],NuevoPath),
     encontrar_transitivos([X1,Y1],Resto,NuevoPath,Resultado).
-
 encontrar_transitivos([X,_],[[X1,Y1]|Resto],Path,Resultado):-
     X=:=X1,
     append(Path,[Y1],NuevoPath),
     encontrar_transitivos([X1,Y1],Resto,NuevoPath,Resultado).
-
 encontrar_transitivos([X,Y],[_|Resto],Path,Resultado):-
     encontrar_transitivos([X,Y],Resto,Path,Resultado).
 
-
+%Predicado que verifica si un elemento pertenece a una lista de sublistas.
 esta_en_la_lista(Elemento, ListaSublistas) :-
     append(ListaSublistas, ListaAplanada),
     member(Elemento, ListaAplanada).
