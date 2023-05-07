@@ -11,11 +11,11 @@
 join(Grid, NumOfColumns, Path, RGrids):-
     lista_de_posiciones(Path,NumOfColumns,Posiciones),
     sort(Posiciones,PosicionesOrdenadas),
-    convertir_en_ceros(Grid,PosicionesOrdenadas,GridEliminados,0),
+    convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
     suma_valores(Grid,PosicionesOrdenadas,Suma),
     ultimo(Ultimo,Posiciones),
     truncar_a_potencia_de_2(Suma, Resultado),
-    convertir_en_ceros(GridEliminados,[Ultimo],GridSuma,Resultado),
+    convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado),
     obtener_lista_columnas(GridSuma,NumOfColumns,ListaColumnas),
     obtener_cant_filas(Grid,NumOfColumns,CantidadFilas),
     renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
@@ -48,18 +48,18 @@ lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
 
               
 % Predicado para convertir las Posiciones de una lista en 0.
-convertir_en_ceros(Lista, Posiciones, NuevaLista,Valor) :-
-    convertir_en_ceros_aux(Lista, Posiciones, 0, NuevaLista,Valor).
+convertir_en_valorX(Lista, Posiciones, NuevaLista,Valor) :-
+    convertir_en_valorX_aux(Lista, Posiciones, 0, NuevaLista,Valor).
 
-convertir_en_ceros_aux(Lista, [], _, Lista,_).
-convertir_en_ceros_aux([_|Resto], [Posicion|RestoPosiciones], PosicionActual, [Valor|RestoNuevaLista],Valor) :-
+convertir_en_valorX_aux(Lista, [], _, Lista,_).
+convertir_en_valorX_aux([_|Resto], [Posicion|RestoPosiciones], PosicionActual, [Valor|RestoNuevaLista],Valor) :-
     PosicionActual =:= Posicion,
     NuevaPosicionActual is PosicionActual + 1,
-    convertir_en_ceros_aux(Resto, RestoPosiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
-convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|RestoNuevaLista],Valor) :-
+    convertir_en_valorX_aux(Resto, RestoPosiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
+convertir_en_valorX_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|RestoNuevaLista],Valor) :-
     \+ member(PosicionActual, Posiciones),
     NuevaPosicionActual is PosicionActual + 1,
-    convertir_en_ceros_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
+    convertir_en_valorX_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
 /**
  *Predicado que dada una Lista y un numero de columnas, retorna una lista con X listas
@@ -180,11 +180,11 @@ join_de_sublistas(Grid,NumOfColumns,[L|Resto],RGrids):-
 % Predicado que convierte en cero el camino y coloca en el ultimo lugar la suma resultante.
 join_booster(Grid, _, Lista, GridSuma):-
     sort(Lista,PosicionesOrdenadas),
-    convertir_en_ceros(Grid,PosicionesOrdenadas,GridEliminados,0),
+    convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
     suma_valores(Grid,PosicionesOrdenadas,Suma),
     ultimo(Ultimo,Lista),
     truncar_a_potencia_de_2(Suma, Resultado),
-    convertir_en_ceros(GridEliminados,[Ultimo],GridSuma,Resultado).
+    convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado).
 
 %Obtiene todos los pares adyacentes iguales para todos los elementos de la matriz. 
 adyacentes(Pos, Grid, _,_, ListaPath, ListaRetornar) :-
