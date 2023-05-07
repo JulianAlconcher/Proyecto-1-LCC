@@ -19,10 +19,10 @@ join(Grid, NumOfColumns, Path, RGrids):-
     obtener_lista_columnas(GridSuma,NumOfColumns,ListaColumnas),
     obtener_cant_filas(Grid,NumOfColumns,CantidadFilas),
     renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
-    intercalar(ListaRenovada,[],NUEVAGRID),
-    RGrids=[GridSuma,NUEVAGRID].
+    intercalar(ListaRenovada,[],GridFinal),
+    RGrids=[GridSuma,GridFinal].
     
-% Predica que retorna el ultimo elemento de una lista dada.     
+% Predicado que retorna el ultimo elemento de una lista.     
 ultimo(X, [X]).
 ultimo(X, [_|T]) :- ultimo(X, T).
 
@@ -47,11 +47,10 @@ lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
     lista_de_posiciones(Resto,NumOfColumns,Posiciones).
 
               
-% Predicado para convertir en 0 una lista en varias posiciones
+% Predicado para convertir las Posiciones de una lista en 0.
 convertir_en_ceros(Lista, Posiciones, NuevaLista,Valor) :-
     convertir_en_ceros_aux(Lista, Posiciones, 0, NuevaLista,Valor).
 
-% Predicado que convierte todos los elementos de una lista en ceros. 
 convertir_en_ceros_aux(Lista, [], _, Lista,_).
 convertir_en_ceros_aux([_|Resto], [Posicion|RestoPosiciones], PosicionActual, [Valor|RestoNuevaLista],Valor) :-
     PosicionActual =:= Posicion,
@@ -62,19 +61,20 @@ convertir_en_ceros_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|R
     NuevaPosicionActual is PosicionActual + 1,
     convertir_en_ceros_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
-% Predicado que dada una matriz la divide en columnas y retorna una lista.
+/**
+ *Predicado que dada una Lista y un numero de columnas, retorna una lista con X listas
+ *donde X es el numero de columnas y cada sublista es una columna de la matriz.
+*/
 obtener_lista_columnas(Grilla,NumOfColumns,ListaColumnas):-
     crear_lista_columnas(NumOfColumns,ListaVacia),
     obtener_X_Primeros(Grilla,NumOfColumns,X_Primeros),
     insertar_en_columnas(X_Primeros,ListaVacia,ListaColumnas).
 
-% Predicado que inserta elementos en columnas. 
 insertar_en_columnas([], Resultado, Resultado).
 insertar_en_columnas([X|Xs], L, Resultado):-
     insertar_elementos(X, L, ListaAux),
     insertar_en_columnas(Xs, ListaAux, Resultado).
 
-% Predicado que inserta elementos en una lista. 
 insertar_elementos([], Ls, Ls).
 insertar_elementos([X|Xs], [L|Ls], [L2|Ls2]) :-
     append(L, [X], L2),
@@ -87,21 +87,21 @@ crear_lista_columnas(NumOfColumns, [ [] | ListaColumnas ]) :-
         AUX is NumOfColumns - 1,
         crear_lista_columnas(AUX, ListaColumnas).
 
-% Predicado que retorna los X elementos primeros de una lista.
+% Predicado que retorna los X primeros elementos de una lista.
 obtener_X_Primeros([], _, []).
 obtener_X_Primeros([H|T], NumOfColumns, [Col|Cols]) :-
     length(Col, NumOfColumns),
     append(Col, Rest, [H|T]),
     obtener_X_Primeros(Rest, NumOfColumns, Cols).
 
-% Predicado que actualiza los valores de una lista, retornando una nueva version de la lista pasada por parametro.
+% Predicado que actualiza los valores de una lista.
 renovar_Columnas([],[],_).
 renovar_Columnas([L|Ls],[L2|Ls2],CantFilas):-
     eliminar_ceros(L,X),
     completar_lista(X,L2,CantFilas),
     renovar_Columnas(Ls,Ls2,CantFilas).
 
-% Predicado que completa a la lista entregada con elementos con numero aleatorio.
+% Predicado que completa a la lista entregada con numeros aleatorios que son potencia de 2.
 completar_lista(Lista, ListaCompleta,CantFilas) :-
     length(Lista, Longitud),
     Longitud >= CantFilas,
@@ -112,7 +112,7 @@ completar_lista(Lista, ListaCompleta,CantFilas) :-
     generar_numero_aleatorio(Num),
     completar_lista([Num|Lista], ListaCompleta,CantFilas).
 
-% Predicado que retorna un numero aleatorio. 
+% Predicado que retorna un numero aleatorio potencia de 2. 
 generar_numero_aleatorio(N) :-
     random_between(1,6, R),
     obtener_numero(R, N).
@@ -128,7 +128,7 @@ eliminar_ceros([], []).
 eliminar_ceros([0|T], L) :- eliminar_ceros(T, L).
 eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
 
-% Predicado que intercala sublistas y retorna una lista conteniendo a las sublistas intercaladas. 
+% Predicado que retorna una lista conteniendo todas las columnas intercaladas.
 intercalar([], Res, R):-
     reverse(Res,R).
 intercalar([[]|Xs],Res,R) :-
@@ -140,7 +140,6 @@ intercalar(L, R1, R) :-
     quitar_cabeceras(L,Resto),
     concatenar(Cabeceras_Inv, R1, RAUX),
     intercalar(Resto, RAUX, R).
-
 
 tomar_cabeceras([], []).
 tomar_cabeceras([[X|_]|Ls], [X|Rs]) :-
@@ -154,13 +153,13 @@ concatenar([], L, L).
 concatenar([X|L1], L2, [X|L3]) :-
     concatenar(L1, L2, L3).
 
-%Predicado que retorna la cantidad de filas de la matriz GRID.
+%Predicado que retorna la cantidad de filas de la matriz.
 obtener_cant_filas(Grid, NumColumnas, NumFilas) :-
     length(Grid, Longitud),
     NumFilas is Longitud // NumColumnas.    
 
     
-%Metodo booster que retorna una grid con todos los caminos adyacentes calculados.
+%Preciado que retorna una grid con todos los caminos adyacentes calculados.
 booster(Grid,NumOfColumns,RGrids):-
     adyacentes(0,Grid,NumOfColumns,[],[],ListaARetornar),
     agrupar_sublistas(ListaARetornar,[],ListaResultado),
@@ -169,8 +168,8 @@ booster(Grid,NumOfColumns,RGrids):-
     obtener_lista_columnas(GridBooster,NumOfColumns,ListaColumnas),
     obtener_cant_filas(GridBooster,NumOfColumns,CantidadFilas),
     renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
-    intercalar(ListaRenovada,[],NUEVAGRID),
-    RGrids=[GridBooster,NUEVAGRID].
+    intercalar(ListaRenovada,[],GridFinal),
+    RGrids=[GridBooster,GridFinal].
 
 % Predicado que para cada sublista de una lista calcula la suma del camino.
 join_de_sublistas(X,_,[],X).
@@ -187,7 +186,7 @@ join_booster(Grid, _, Lista, GridSuma):-
     truncar_a_potencia_de_2(Suma, Resultado),
     convertir_en_ceros(GridEliminados,[Ultimo],GridSuma,Resultado).
 
-%Obtiene todos los pares adyacentes iguales para todos los nodos de la matriz. 
+%Obtiene todos los pares adyacentes iguales para todos los elementos de la matriz. 
 adyacentes(Pos, Grid, _,_, ListaPath, ListaRetornar) :-
     length(Grid, Length),
     Pos >= Length,
@@ -199,7 +198,7 @@ adyacentes(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath,ListaRetornar):-
     append(ListaVisitados,[Pos],ListaVisitadosN),
     adyacentes(PosNueva,Grid,NumOfColumns,ListaVisitadosN,ListaNueva,ListaRetornar).
 
-%Predicado que retorna todos los nodos adyacentes a una posicion.
+%Predicado que retorna todos los elementos adyacentes a una posicion.
 obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados):-
     findall(X,(ady(Pos,Grid,NumOfColumns,ListaVisitados,X)),Path).
 
@@ -289,7 +288,7 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     not(member(Posicion_ady, ListaVisitados)), 
     append([Pos,Posicion_ady],[],ListaPath).
 
-%Predicado que dada una lista por parametro, agrupa las sublistas.
+%Predicado que dada una lista de listas, agrupa las sublistas.
 agrupar_sublistas([],ListaResultado,ListaResultado).
 agrupar_sublistas([[X,Y]|Resto],ListaRetorno,ListaResultado):-
     not(esta_en_la_lista(Y,ListaRetorno)),
@@ -298,7 +297,7 @@ agrupar_sublistas([[X,Y]|Resto],ListaRetorno,ListaResultado):-
 agrupar_sublistas([_|Resto],ListaRetorno,ListaResultado):-
     agrupar_sublistas(Resto,ListaRetorno,ListaResultado).
 
-%Predicado que encuentra pares transitivos.
+%Predicado que agrupa pares transitivos en una misma lista.
 encontrar_transitivos(_,[],X,X).
 encontrar_transitivos([_,Y],[[X1,Y1]|Resto],Path,Resultado):-
     Y=:=X1,
