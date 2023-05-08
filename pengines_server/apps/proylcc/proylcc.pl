@@ -115,13 +115,7 @@ completar_lista(Lista, ListaCompleta,CantFilas) :-
 % Predicado que retorna un numero aleatorio potencia de 2. 
 generar_numero_aleatorio(N) :-
     random_between(1,6, R),
-    obtener_numero(R, N).
-    obtener_numero(1, 2).
-    obtener_numero(2, 4).
-    obtener_numero(3, 8).
-    obtener_numero(4, 16).
-    obtener_numero(5, 32).
-    obtener_numero(6, 64).
+    N is 2^R.
 
 % Predicado que dada una lista de numeros, elimina todas las apariciones de ceros de la misma.  
 eliminar_ceros([], []).

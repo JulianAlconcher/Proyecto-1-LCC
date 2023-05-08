@@ -147,11 +147,12 @@ function Game() {
       <div className="header">
         <div className="container">
           <div className="score">{score}</div>
-          <div className="recuadro" id='recuadro' style={{
+          <div className="recuadro" id='recuadro' 
+          style={{
             backgroundColor  : numberToColor(PossiblePathAdd),
-            visibility : path.length>0}}> 
-            <div className="suma">{PossiblePathAdd}</div>
-          </div>
+            visibility : path.length>0
+          }}> 
+          <div className="suma">{PossiblePathAdd}</div></div>
         </div>
       </div>
       <Board
