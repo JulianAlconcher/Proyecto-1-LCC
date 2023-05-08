@@ -70,11 +70,13 @@ obtener_lista_columnas(Grilla,NumOfColumns,ListaColumnas):-
     obtener_X_Primeros(Grilla,NumOfColumns,X_Primeros),
     insertar_en_columnas(X_Primeros,ListaVacia,ListaColumnas).
 
+% Predicado que inserta elementos de una lista, en una lista de sublistas(columnas)
 insertar_en_columnas([], Resultado, Resultado).
 insertar_en_columnas([X|Xs], L, Resultado):-
     insertar_elementos(X, L, ListaAux),
     insertar_en_columnas(Xs, ListaAux, Resultado).
 
+%Inserta elementos en una lista de sublistas.
 insertar_elementos([], Ls, Ls).
 insertar_elementos([X|Xs], [L|Ls], [L2|Ls2]) :-
     append(L, [X], L2),
@@ -135,14 +137,17 @@ intercalar(L, R1, R) :-
     concatenar(Cabeceras_Inv, R1, RAUX),
     intercalar(Resto, RAUX, R).
 
+%Predicado que retorna las cabeceras de una lista
 tomar_cabeceras([], []).
 tomar_cabeceras([[X|_]|Ls], [X|Rs]) :-
     tomar_cabeceras(Ls, Rs).
 
+%Predicado que elimina las cabeceras de una lista
 quitar_cabeceras([], []).
 quitar_cabeceras([[_|Xs]|Ls], [Xs|Rs]) :-
     quitar_cabeceras(Ls, Rs).
 
+%Predicado que concatena dos listas
 concatenar([], L, L).
 concatenar([X|L1], L2, [X|L3]) :-
     concatenar(L1, L2, L3).
