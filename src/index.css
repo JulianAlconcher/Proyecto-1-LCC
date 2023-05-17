@@ -155,7 +155,69 @@ body {
   touch-action: manipulation;
   position:relative;
   left: 40vh;
+  bottom: 54vh;
+  width: 150px;
+}
+
+.boton2 {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  width: 150px;
+  color: rgb(255, 255, 255);
+  font: 16px "Century Gothic", Futura, sans-serif;
+  background: #239cd1;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  position:relative;
+  left: 40vh;
+  bottom: 52vh;
+}
+
+.boton3 {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  width: 150px;
+  color: rgb(255, 255, 255);
+  font: 16px "Century Gothic", Futura, sans-serif;
+  background: #e25a88;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  position:relative;
+  left: 40vh;
   bottom: 50vh;
+}
+
+.botonMUTE {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  width: 150px;
+  height: 40px;
+  color: rgb(255, 255, 255);
+  font: 16px "Century Gothic", Futura, sans-serif;
+  background: #a63c4b;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  position:relative;
+  left: 40vh;
+  bottom: 48vh;
 }
 
 .boton:before {
@@ -215,4 +277,25 @@ body {
 .boton:hover {
   transform:scale(1.06);
   transition-duration: 0.3s;
+}
+
+.boton2:hover {
+  transform:scale(1.06);
+  transition-duration: 0.3s;
+  background-color: #ba23d1;
+}
+
+.boton3:hover {
+  transform:scale(1.06);
+  transition-duration: 0.3s;
+  background-color: #15e6df;
+  color: #111;
+}
+
+
+.botonMUTE:hover {
+  transform:scale(1.06);
+  transition-duration: 0.3s;
+  background-color: #ff0000;
+  color: #111;
 }

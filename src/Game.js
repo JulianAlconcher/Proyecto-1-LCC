@@ -4,7 +4,8 @@ import Board from './Board';
 import { joinResult, numberToColor, valueInPos } from './util';
 import soundBlock from "./SoundFx/selectionSound.mp3"
 import soundSucces from "./SoundFx/Succes.mp3"
-//import soundBooster from "./SoundFx/BoosterFx.mp3"
+import soundMaximosI from "./SoundFx/AyudaMaximosIguales.mp3"
+import soundMovidaMax from "./SoundFx/AyudaMovidaMaxima.mp3"
 
 let pengine;
 
@@ -18,6 +19,7 @@ function Game() {
   const [PossiblePathAdd, setPossiblePathAdd] = useState(0);
   const [path, setPath] = useState([]);
   const [waiting, setWaiting] = useState(false);
+  const [mute, setMute] = useState(false);
 
   useEffect(() => {
     // This is executed just once, after the first render.
@@ -67,6 +69,7 @@ function Game() {
   }
 
   function playSound(sonido) {
+    if(!mute)
     new Audio(sonido).play()
   }
   /**
@@ -168,7 +171,25 @@ function Game() {
           setTexto("El Booster Fue Activado!");
           booster();
         }
-      }> BOOST</button>     
+      }> BOOST</button>    
+      <button className="boton2" id='boton2' onClick={
+        () => {
+          setTexto("Ayuda movida máxima");
+          playSound(soundMovidaMax);
+        }
+      }> Movida MAX</button>   
+      <button className="boton3" id='boton3' onClick={
+        () => {
+          setTexto("Ayuda máximos iguales adyacentes");
+          playSound(soundMaximosI);
+        }
+      }> Maximos Iguales Adyacentes</button> 
+       <button className="botonMUTE" id='botonMUTE' onClick={
+        () => {
+          setTexto("Audio muteado");
+          setMute(true);
+        }
+      }> MUTE</button> 
     </div>
   );
 }
