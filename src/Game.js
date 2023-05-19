@@ -166,7 +166,7 @@ function Game() {
         onDone={onPathDone}
       />
       <p className="textoDeBooster" id='boosterActivado' >{texto}</p>
-      <button className="boton" id='boton' onClick={
+      <button className="boton" id='boton' disabled={waiting}  onClick={
         () => {
           setTexto("El Booster Fue Activado!");
           booster();
@@ -186,8 +186,14 @@ function Game() {
       }> Maximos Iguales Adyacentes</button> 
        <button className="botonMUTE" id='botonMUTE' onClick={
         () => {
-          setTexto("Audio muteado");
-          setMute(true);
+          if(mute===true){
+            setTexto("Audio encendido");
+            setMute(false);
+          }
+          else{
+            setTexto("Audio muteado");
+            setMute(true);
+          }
         }
       }> MUTE</button> 
     </div>
