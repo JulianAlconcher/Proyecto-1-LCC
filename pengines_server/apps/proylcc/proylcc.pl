@@ -287,6 +287,7 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     not(member(Posicion_ady, ListaVisitados)), 
     append([Pos,Posicion_ady],[],ListaPath).
 
+
     agrupar_sublistas(ListaActual,ListaModificada,ListaActual):-
         ListaActual=ListaModificada.
     agrupar_sublistas(ListaActual,_,ListaResultado):-
@@ -302,8 +303,7 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
           agrupar_iguales(T,NuevaListaVisitados,NuevaListaResultado,ListaRetornar).
         agrupar_iguales([_|T],ListaVisitados,ListaResultado,ListaRetornar):-
             agrupar_iguales(T,ListaVisitados,ListaResultado,ListaRetornar).
-              
-    
+               
     existen_iguales(Nueva,[],Nueva).
     
     existen_iguales(L,[H|T],ListaAux):-
@@ -315,42 +315,10 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     comparten_elementos([],_,_,[]).
     comparten_elementos([H|_],Original,L,NuevaLista) :-
         member(H,L),
-        append(Original,L,ListaRepes),
-        list_to_set(ListaRepes,NuevaLista).
+        append(Original,L,NuevaLista).
     comparten_elementos([_|T],Original,L,NuevaLista):-
         comparten_elementos(T,Original,L,NuevaLista).               
     
     algun_elemento_en_comun(Lista1, Lista2) :-
-        member(Elemento, Lista1),  % Seleccionar un elemento de Lista1
-        member(Elemento, Lista2).  % Verificar si el elemento está en Lista2
-
-
-/**
-%Predicado que dada una lista de listas, agrupa las sublistas.
-agrupar_sublistas([],ListaResultado,ListaResultado).
-agrupar_sublistas([[X,Y]|Resto],ListaRetorno,ListaResultado):-
-    not(esta_en_la_lista(Y,ListaRetorno)),
-    encontrar_transitivos([X,Y],Resto,[X,Y],Resul),
-    agrupar_sublistas(Resto,[Resul|ListaRetorno],ListaResultado).
-agrupar_sublistas([_|Resto],ListaRetorno,ListaResultado):-
-    agrupar_sublistas(Resto,ListaRetorno,ListaResultado).
-
-%Predicado que agrupa pares transitivos en una misma lista.
-encontrar_transitivos(_,[],X,X).
-encontrar_transitivos([_,Y],[[X1,Y1]|Resto],Path,Resultado):-
-    Y=:=X1,
-    append(Path,[Y1],NuevoPath),
-    encontrar_transitivos([X1,Y1],Resto,NuevoPath,Resultado).
-encontrar_transitivos([X,_],[[X1,Y1]|Resto],Path,Resultado):-
-    X=:=X1,
-    append(Path,[Y1],NuevoPath),
-    encontrar_transitivos([X1,Y1],Resto,NuevoPath,Resultado).
-encontrar_transitivos([X,Y],[_|Resto],Path,Resultado):-
-    encontrar_transitivos([X,Y],Resto,Path,Resultado).
-
-%Predicado que verifica si un elemento pertenece a una lista de sublistas.
-esta_en_la_lista(Elemento, ListaSublistas) :-
-    append(ListaSublistas, ListaAplanada),
-    member(Elemento, ListaAplanada).
-    
-    */
+        member(Elemento, Lista1),
+        member(Elemento, Lista2).  

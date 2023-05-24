@@ -48,6 +48,8 @@ function Game() {
     if (waiting) {
       return;
     }
+    const element = document.getElementById('boton');
+    element.disabled = true;
     setPossiblePathAdd(round(addPathInProgess(newPath)));
     console.log("Score:" + PossiblePathAdd);
     setPath(newPath);
