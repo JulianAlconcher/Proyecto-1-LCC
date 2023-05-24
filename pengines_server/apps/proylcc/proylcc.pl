@@ -287,6 +287,45 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     not(member(Posicion_ady, ListaVisitados)), 
     append([Pos,Posicion_ady],[],ListaPath).
 
+    agrupar_sublistas(ListaActual,ListaModificada,ListaActual):-
+        ListaActual=ListaModificada.
+    agrupar_sublistas(ListaActual,_,ListaResultado):-
+        agrupar_iguales(ListaActual,[],[],ListaRet),
+        agrupar_sublistas(ListaRet,ListaActual,ListaResultado).
+    
+        agrupar_iguales([],_,X,X).
+    agrupar_iguales([H|T],ListaVisitados,ListaResultado,ListaRetornar):-
+          not(algun_elemento_en_comun(H,ListaVisitados)),
+          existen_iguales(H,T,Resul),
+          append(ListaResultado,[Resul],NuevaListaResultado),
+          append(ListaVisitados,Resul,NuevaListaVisitados),
+          agrupar_iguales(T,NuevaListaVisitados,NuevaListaResultado,ListaRetornar).
+        agrupar_iguales([_|T],ListaVisitados,ListaResultado,ListaRetornar):-
+            agrupar_iguales(T,ListaVisitados,ListaResultado,ListaRetornar).
+              
+    
+    existen_iguales(Nueva,[],Nueva).
+    
+    existen_iguales(L,[H|T],ListaAux):-
+        comparten_elementos(L,L,H,Nueva),
+        append(L,Nueva,ListaRepes),
+        list_to_set(ListaRepes,NuevoResul),
+        existen_iguales(NuevoResul,T,ListaAux).
+    
+    comparten_elementos([],_,_,[]).
+    comparten_elementos([H|_],Original,L,NuevaLista) :-
+        member(H,L),
+        append(Original,L,ListaRepes),
+        list_to_set(ListaRepes,NuevaLista).
+    comparten_elementos([_|T],Original,L,NuevaLista):-
+        comparten_elementos(T,Original,L,NuevaLista).               
+    
+    algun_elemento_en_comun(Lista1, Lista2) :-
+        member(Elemento, Lista1),  % Seleccionar un elemento de Lista1
+        member(Elemento, Lista2).  % Verificar si el elemento está en Lista2
+
+
+/**
 %Predicado que dada una lista de listas, agrupa las sublistas.
 agrupar_sublistas([],ListaResultado,ListaResultado).
 agrupar_sublistas([[X,Y]|Resto],ListaRetorno,ListaResultado):-
@@ -314,3 +353,4 @@ esta_en_la_lista(Elemento, ListaSublistas) :-
     append(ListaSublistas, ListaAplanada),
     member(Elemento, ListaAplanada).
     
+    */
