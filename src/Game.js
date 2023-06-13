@@ -19,7 +19,7 @@ function Game() {
   const [PossiblePathAdd, setPossiblePathAdd] = useState(0);
   const [path, setPath] = useState([]);
   const [waiting, setWaiting] = useState(false);
-  const [mute, setMute] = useState(false);
+  const [soundOn, setSoundOn] = useState(false);
 
   useEffect(() => {
     // This is executed just once, after the first render.
@@ -71,7 +71,7 @@ function Game() {
   }
 
   function playSound(sonido) {
-    if(!mute)
+    if(soundOn)
     new Audio(sonido).play()
   }
   /**
@@ -128,21 +128,42 @@ function Game() {
     });
   }
 
-  /**
-   * Displays each grid of the sequence as the current grid in 1sec intervals.
-   * @param {number[][]} rGrids a sequence of grids.
+     /**
+   * Called when the user clicked booster button.
+   * Consulta en prolog -->   ayuda_movida_maxima(Grid,NumOfColumns,Resultado):-
    */
-  function animateEffect(rGrids) {
-    setGrid(rGrids[0]);
-    const restRGrids = rGrids.slice(1);
-    if (restRGrids.length > 0) {
-      setTimeout(() => {
-        animateEffect(restRGrids);
-      }, 1000);
-    } else {
-      setWaiting(false);
-    }
+    function ayudaMovidaMax() {
+    setPossiblePathAdd(0);
+    const gridS = JSON.stringify(grid);
+    const queryS = "ayuda_movida_maxima(" + gridS + "," + numOfColumns +", Resultado)";
+    setWaiting(true);
+
+    pengine.query(queryS, (success, response) => {
+      if (success) {      
+        console.log(response['Resultado']);
+        console.log(JSON.stringify(path));
+        setPath(response['Resultado']);
+      } 
+      
+      else {setWaiting(false);}
+    });
   }
+
+/**
+ * Displays each grid of the sequence as the current grid in 1sec intervals.
+ * @param {number[][]} rGrids a sequence of grids.
+ */
+function animateEffect(rGrids) {
+  setGrid(rGrids[0]);
+  const restRGrids = rGrids.slice(1);
+  if (restRGrids.length > 0) {
+    setTimeout(() => {
+      animateEffect(restRGrids);
+    }, 1000);
+  } else {
+    setWaiting(false);
+  }
+}
 
   if (grid === null) {
     return null;
@@ -174,13 +195,14 @@ function Game() {
           booster();
         }
       }> BOOST</button>    
-      <button className="boton2" id='boton2' onClick={
+      <button className="boton2" id='boton2' disabled={waiting} onClick={
         () => {
           setTexto("Ayuda movida máxima");
           playSound(soundMovidaMax);
+          ayudaMovidaMax();
         }
       }> Movida MAX</button>   
-      <button className="boton3" id='boton3' onClick={
+      <button className="boton3" id='boton3' disabled={waiting} onClick={
         () => {
           setTexto("Ayuda máximos iguales adyacentes");
           playSound(soundMaximosI);
@@ -188,16 +210,16 @@ function Game() {
       }> Maximos Iguales Adyacentes</button> 
        <button className="botonMUTE" id='botonMUTE' onClick={
         () => {
-          if(mute===true){
+          if(soundOn===false){
             setTexto("Audio encendido");
-            setMute(false);
+            setSoundOn(true);
           }
           else{
             setTexto("Audio muteado");
-            setMute(true);
+            setSoundOn(false);
           }
         }
-      }> MUTE</button> 
+      }> {soundOn ? "Sound Off" : "Sound On"}</button> 
     </div>
   );
 }
