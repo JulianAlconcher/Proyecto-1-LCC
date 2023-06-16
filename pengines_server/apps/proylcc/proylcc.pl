@@ -348,7 +348,7 @@ obtener_path_maximo([],_,_,ListaPath,X):-
 
 obtener_path_maximo([P|Ps],Grid,NumOfColumns,ListaPath,Resultado):-
     obtener_adyacentes(P,Grid,NumOfColumns,[],[],Adyacentes,1),   
-    findall(X,metodo(P,Grid,NumOfColumns,[P],Adyacentes,X),PathSuma),
+    findall(X,adyancentes_recursivo(P,Grid,NumOfColumns,[P],Adyacentes,X),PathSuma),
     append(ListaPath,PathSuma,NuevaListaPath),
     obtener_path_maximo(Ps,Grid,NumOfColumns,NuevaListaPath,Resultado).       
     
@@ -367,19 +367,19 @@ path_maximo([_|Xs],Maximo,Res):-
 ultimo_elemento(List, Last) :-
     reverse(List, [Last|_]).
 
-metodo(_,Grid,_,PathActual,[],PathSuma):-
+adyancentes_recursivo(_,Grid,_,PathActual,[],PathSuma):-
     controlar_suma(Grid,PathActual,PathSuma),!.
 
-metodo(_,Grid,NumOfColumns,PathActual,[X|_],PathSuma):-
+adyancentes_recursivo(_,Grid,NumOfColumns,PathActual,[X|_],PathSuma):-
     append(PathActual,[X],NuevoPath),
     obtener_adyacentes(X,Grid,NumOfColumns,[],NuevoPath,NuevosAdyacentes,1),
-    metodo(X,Grid,NumOfColumns,NuevoPath,NuevosAdyacentes,PathSuma).
+    adyancentes_recursivo(X,Grid,NumOfColumns,NuevoPath,NuevosAdyacentes,PathSuma).
 
 
-metodo(Posicion,Grid,NumOfColumns,PathActual,[_|Xs],PathSuma):-
+adyancentes_recursivo(Posicion,Grid,NumOfColumns,PathActual,[_|Xs],PathSuma):-
     length(Xs,Res),
     Res>0,
-    metodo(Posicion,Grid,NumOfColumns,PathActual,Xs,PathSuma).
+    adyancentes_recursivo(Posicion,Grid,NumOfColumns,PathActual,Xs,PathSuma).
 
 primer_elemento([X|_], X).
         
