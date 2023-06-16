@@ -60,7 +60,7 @@ function Game() {
   function addPathInProgess(newPath){
     var suma = 0;
     for (var i = 0; i < newPath.length; i++) {
-      suma = suma + valueInPos(newPath[i],grid,5);
+      suma = suma + valueInPos(newPath[i],grid,numOfColumns);
     }
     return suma;
   }
@@ -71,8 +71,11 @@ function Game() {
   }
 
   function playSound(sonido) {
-    if(soundOn)
-    new Audio(sonido).play()
+    if(soundOn){
+      var audio = new  Audio(sonido);
+      audio.volume=0.1;
+      audio.play();
+  }
   }
   /**
    * Called when the user finished drawing a path in the grid.
@@ -143,6 +146,7 @@ function Game() {
         console.log(response['Resultado']);
         setPath(response['Resultado']);
         setPossiblePathAdd(round(addPathInProgess(response['Resultado'])));
+        setWaiting(false);
       } 
       
       else {setWaiting(false);}
@@ -164,6 +168,7 @@ function Game() {
           console.log(response['Resultado']);
           setPath(response['Resultado']);
           setPossiblePathAdd(round(addPathInProgess(response['Resultado'])));
+          setWaiting(false);
         } 
         
         else {setWaiting(false);}
@@ -212,8 +217,13 @@ function animateEffect(rGrids) {
       <p className="textoDeBooster" id='boosterActivado' >{texto}</p>
       <button className="boton" id='boton' disabled={waiting}  onClick={
         () => {
-          setTexto("El Booster Fue Activado!");
-          booster();
+          
+          if(path.length===0){
+            setTexto("El Booster Fue Activado!");
+             booster();}
+          else{
+            setTexto("El booster no puede ser activado");
+             }
         }
       }> BOOST</button>    
       <button className="boton2" id='boton2' disabled={waiting} onClick={
