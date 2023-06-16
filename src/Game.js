@@ -129,7 +129,7 @@ function Game() {
   }
 
      /**
-   * Called when the user clicked booster button.
+   * Called when the user clicked Ayuda Movida Maxima button.
    * Consulta en prolog -->   ayuda_movida_maxima(Grid,NumOfColumns,Resultado):-
    */
     function ayudaMovidaMax() {
@@ -141,13 +141,34 @@ function Game() {
     pengine.query(queryS, (success, response) => {
       if (success) {      
         console.log(response['Resultado']);
-        console.log(JSON.stringify(path));
         setPath(response['Resultado']);
+        setPossiblePathAdd(round(addPathInProgess(response['Resultado'])));
       } 
       
       else {setWaiting(false);}
     });
   }
+
+    /**
+   * Called when the user clicked Maximos Iguales Adyacentes button.
+   * Consulta en prolog -->   maximos_iguales_adyacentes(Grid,NumOfColumns,Resultado):-
+   */
+    function maximosIgualesAdyacentes() {
+      setPossiblePathAdd(0);
+      const gridS = JSON.stringify(grid);
+      const queryS = "ayuda_maximos_iguales_adyacentes(" + gridS + "," + numOfColumns +", Resultado)";
+      setWaiting(true);
+  
+      pengine.query(queryS, (success, response) => {
+        if (success) {      
+          console.log(response['Resultado']);
+          setPath(response['Resultado']);
+          setPossiblePathAdd(round(addPathInProgess(response['Resultado'])));
+        } 
+        
+        else {setWaiting(false);}
+      });
+    }
 
 /**
  * Displays each grid of the sequence as the current grid in 1sec intervals.
@@ -206,6 +227,7 @@ function animateEffect(rGrids) {
         () => {
           setTexto("Ayuda máximos iguales adyacentes");
           playSound(soundMaximosI);
+          maximosIgualesAdyacentes();
         }
       }> Maximos Iguales Adyacentes</button> 
        <button className="botonMUTE" id='botonMUTE' onClick={

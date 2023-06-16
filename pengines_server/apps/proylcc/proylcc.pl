@@ -26,20 +26,6 @@ join(Grid, NumOfColumns, Path, RGrids):-
 ultimo(X, [X]).
 ultimo(X, [_|T]) :- ultimo(X, T).
 
-% Predicado que calcula la suma de todos los elementos de una lista. 
-suma_valores([], [], 0).
-suma_valores([X|L], [P|Ps], Suma) :-
-   	nth0(P, [X|L], Elemento), 
-    suma_valores([X|L], Ps, Suma0), 
-	Suma is Suma0 + Elemento.
-suma_valores([_|L], P, Suma) :-
-    suma_valores(L, P, Suma).
-
-% Predicado que realiza un redondeo hacia arriba de potencias de dos. 
-truncar_a_potencia_de_2(N, Resultado) :-
-    Exponente is ceiling(log(N) / log(2)), 
-    Resultado is 2 ** Exponente.
-
 % Predicado que dado un path de posiciones X,Y, convierte y retorna las coordenadas X,Y en posiciones de una lista. 
 lista_de_posiciones([],_,[]).
 lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
@@ -329,15 +315,15 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     %PARTE 2 DEL PROYECTO
 
     % Predicado para convertir una posición en coordenadas X, Y
-    position_to_coordinates(Position, _, Cols, X, Y) :-
+    posiciones_a_coordenadas_XY(Position, _, Cols, X, Y) :-
         Y is Position mod Cols,
         X is Position div Cols.
 
     % Predicado para convertir una lista de posiciones en una lista de coordenadas X, Y
-    positions_to_coordinates([], _, _, []).
-    positions_to_coordinates([Position|Positions], Rows, Cols, [[X,Y]|Coordinates]) :-
-        position_to_coordinates(Position, Rows, Cols, X, Y),
-        positions_to_coordinates(Positions, Rows, Cols, Coordinates).
+    posiciones_a_coordenadas_XY([], _, _, []).
+    posiciones_a_coordenadas_XY([Position|Positions], Rows, Cols, [[X,Y]|Coordinates]) :-
+        posiciones_a_coordenadas_XY(Position, Rows, Cols, X, Y),
+        posiciones_a_coordenadas_XY(Positions, Rows, Cols, Coordinates).
         generar_lista_de_posiciones_de_grid_completa(0, []).
 
     %Predicado que genera una lista de posiciones del 0 al CantidadElementos-1.
@@ -354,16 +340,16 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
         generar_lista_de_posiciones_de_grid_completa(CantElementos,Posiciones),
         obtener_path_maximo(Posiciones,Grid,NumOfColumns,[],Resul),
         obtener_cant_filas(Grid,NumOfColumns,NumOfRows),
-        positions_to_coordinates(Resul,NumOfRows,NumOfColumns,Resultado).
+        posiciones_a_coordenadas_XY(Resul,NumOfRows,NumOfColumns,Resultado).
     
 
     obtener_path_maximo([],_,_,ListaPath,X):-
         path_maximo(ListaPath,[0],[X|_]),!.
     
     obtener_path_maximo([P|Ps],Grid,NumOfColumns,ListaPath,Resultado):-
-        obtener_adyacentes(P,Grid,NumOfColumns,[],[],Adyacentes),   
+        obtener_adyacentes(P,Grid,NumOfColumns,[],[],Adyacentes,1),   
         findall(X,metodo(P,Grid,NumOfColumns,[P],Adyacentes,X),PathSuma),
-        append(ListaPath,PathSuma,NuevaListaPath),
+        append(PathSuma,ListaPath,NuevaListaPath),
         obtener_path_maximo(Ps,Grid,NumOfColumns,NuevaListaPath,Resultado).       
         
         
@@ -386,7 +372,7 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
     
     metodo(_,Grid,NumOfColumns,PathActual,[X|_],PathSuma):-
         append(PathActual,[X],NuevoPath),
-        obtener_adyacentes(X,Grid,NumOfColumns,[],NuevoPath,NuevosAdyacentes),
+        obtener_adyacentes(X,Grid,NumOfColumns,[],NuevoPath,NuevosAdyacentes,1),
         metodo(X,Grid,NumOfColumns,NuevoPath,NuevosAdyacentes,PathSuma).
     
     
@@ -395,88 +381,215 @@ ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
         Res>0,
         metodo(Posicion,Grid,NumOfColumns,PathActual,Xs,PathSuma).
     
-    
-        
     primer_elemento([X|_], X).
             
-    obtener_adyacentes(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,NuevosAdyacentes),
-        obtener_adyacentes(Posicion,Grid,NumOfColumns,NuevosAdyacentes,PathActual,AdyacentesResultado),!.
-    
-    obtener_adyacentes(_,_,_,X,_,X).
-    
-    %1°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        X is (Posicion mod NumOfColumns),
-        X \= 0,
-        Posicion_ady is Posicion - (NumOfColumns+1),
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %2°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        Posicion_ady is Posicion-NumOfColumns,
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %3°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        X is (Posicion mod NumOfColumns) - (NumOfColumns-1),
-        X \= 0, 
-        Posicion_ady is Posicion-(NumOfColumns-1),
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %4°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        X is (Posicion mod NumOfColumns),
-        X \= 0,  
-        Posicion_ady is Posicion-1,
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %5°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        X is (Posicion mod NumOfColumns) - (NumOfColumns-1),
-        X \= 0, 
-        Posicion_ady is Posicion+1,
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %6°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        X is (Posicion mod NumOfColumns),
-        X \= 0,
-        Posicion_ady is Posicion+(NumOfColumns-1),
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %7°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        Posicion_ady is Posicion+NumOfColumns,
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado).
-    
-    %8°
-    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado):-
-        X is (Posicion mod NumOfColumns) - (NumOfColumns-1),
-        X \= 0, 
-        Posicion_ady is Posicion+(NumOfColumns+1),
-        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado). 
-    
-            
-    comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado):-
-        nth0(Posicion,Grid,Elem),
-        nth0(Posicion_ady,Grid,Ady),
-        not(member(Posicion_ady,PathActual)),
-        not(member(Posicion_ady,Adyacentes)),
-        comprobar_iguales_o_dobles(PathActual,Elem,Ady),
-        append(Adyacentes,[Posicion_ady],AdyacentesResultado).
-                
-    
     controlar_suma(Grid,H,ResultadoParcial):-
         length(H,Cant),
         Cant > 1,
         suma_valores(Grid,H,Suma), 
         truncar_a_potencia_de_2(Suma,SumaRedondeada),
         append([H],[SumaRedondeada],ResultadoParcial).
+            
+    obtener_bloques_posibles([],X,Resul):-
+        sort(X,Aux),
+        reverse(Aux,Resul).
+    
+    obtener_bloques_posibles([X|Xs],ListaBloques,Resul):-
+        not(member(X,ListaBloques)),
+        append(ListaBloques,[X],NuevaListaBloques),
+        obtener_bloques_posibles(Xs,NuevaListaBloques,Resul),!.
+    
+    obtener_bloques_posibles([_|Xs],ListaBloques,Resul):-
+        obtener_bloques_posibles(Xs,ListaBloques,Resul).          
+    
+    ayuda_maximos_iguales_adyacentes(Grid,NumOfColumns,Path):-
+        obtener_bloques_posibles(Grid,[],BloquesPosibles),
+        length(Grid,CantElementos),
+        generar_lista_de_posiciones_de_grid_completa(CantElementos,Posiciones),
+        buscar_path_valor(Grid,NumOfColumns,BloquesPosibles,Posiciones,Posiciones,[],Res),
+        obtener_cant_filas(Grid,NumOfColumns,NumOfRows),
+        posiciones_a_coordenadas_XY(Res,NumOfRows,NumOfColumns,Path).
         
+    buscar_path_valor(Grid,NumOfColumns,_,[],_,ListaCaminos,Path):-
+        buscar_path_adyacente(Grid,NumOfColumns,ListaCaminos,[],Path),!.
+    
+    buscar_path_valor(Grid,NumOfColumns,[_|Bs],[],ListaPosCompleta,_,Path):-
+        buscar_path_valor(Grid,NumOfColumns,Bs,ListaPosCompleta,ListaPosCompleta,[],Path),!.
+    
+    
+    buscar_path_valor(Grid,NumOfColumns,[B|Bs],[X|Xs],ListaPosCompleta,ListaCaminos,Path):-
+        obtener_adyacentes(X,Grid,NumOfColumns,[],[],Adyacentes,1),
+        findall(P,obtener_path_valor(X,Grid,NumOfColumns,[X],Adyacentes,P,B),Lista),
+        append(ListaCaminos,Lista,NuevaListaCaminos),
+        buscar_path_valor(Grid,NumOfColumns,[B|Bs],Xs,ListaPosCompleta,NuevaListaCaminos,Path).
         
+    
+    buscar_path_adyacente(_,_,[],X,X):-
+        length(X,Cantidad),
+        Cantidad>0.
+    
+    buscar_path_adyacente(_,_,[],_,_):-fail.
+        
+    
+    buscar_path_adyacente(Grid,NumOfColumns,[[Path|Valor]|_],_,Res):-
+        join_maximos_iguales(Grid,NumOfColumns,Path,Grids),
+        ultimo_elemento(Grids,GridConGravedad),
+        posicion_gravedad(Path,NumOfColumns,NuevaPos),
+        obtener_adyacentes(NuevaPos,GridConGravedad,NumOfColumns,[],[],ListaDeAdyacentes,0),
+        es_adyacente_a_uno_igual(Grid,ListaDeAdyacentes,Valor),
+        buscar_path_adyacente(Grid,NumOfColumns,[],Path,Res),!.
+    
+    buscar_path_adyacente(Grid,NumOfColumns,[_|Ls],Resultado,Res):-
+        buscar_path_adyacente(Grid,NumOfColumns,Ls,Resultado,Res).
+    
+    es_adyacente_a_uno_igual(Grid,[X|_],Valor):-
+        nth0(X,Grid,Elem),
+        nth0(0,Valor,Val),
+        Elem =:= Val.
+    
+    es_adyacente_a_uno_igual(Grid,[_|Xs],Valor):-
+        es_adyacente_a_uno_igual(Grid,Xs,Valor).
+
+    posicion_gravedad(Path,NumOfColumns,PosicionNueva):-
+        ultimo_elemento(Path,Ultimo),
+        Resto is (Ultimo mod NumOfColumns),
+        controlar_resto(Path,NumOfColumns,Ultimo,Resto,0,Cantidad),
+        PosicionNueva is (Ultimo + (Cantidad*NumOfColumns)).
+    
+    controlar_resto([],_,_,_,X,X).    
+        
+    controlar_resto([P|Ps],NumOfColumns,Pos,Resto,Cantidad,Res):-
+       P > Pos,
+       X  is (P mod NumOfColumns),
+       X = Resto,
+       NuevaCantidad is (Cantidad + 1),
+       controlar_resto(Ps,NumOfColumns,Pos,Resto,NuevaCantidad,Res),!.
+    
+    controlar_resto([_|Ps],NumOfColumns,Pos,Resto,Cantidad,Res):-
+        controlar_resto(Ps,NumOfColumns,Pos,Resto,Cantidad,Res).
+    
+    obtener_path_valor(_,Grid,_,PathActual,[],PathSuma,Valor):-
+        controlar_suma_valor(Grid,PathActual,PathSuma,Valor).
+    
+    obtener_path_valor(_,Grid,NumOfColumns,PathActual,[X|_],PathSuma,Valor):-
+        append(PathActual,[X],NuevoPath),
+        obtener_adyacentes(X,Grid,NumOfColumns,[],NuevoPath,NuevosAdyacentes,1),
+        obtener_path_valor(X,Grid,NumOfColumns,NuevoPath,NuevosAdyacentes,PathSuma,Valor).
+    
+    
+    obtener_path_valor(Posicion,Grid,NumOfColumns,PathActual,[_|Xs],PathSuma,Valor):-
+        obtener_path_valor(Posicion,Grid,NumOfColumns,PathActual,Xs,PathSuma,Valor).
+            
+    obtener_adyacentes(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,NuevosAdyacentes,If),
+        obtener_adyacentes(Posicion,Grid,NumOfColumns,NuevosAdyacentes,PathActual,AdyacentesResultado,If),!.
+    
+    obtener_adyacentes(_,_,_,X,_,X,_).
+    
+    %1°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        X is (Posicion mod NumOfColumns),
+        X \= 0,
+        Posicion_ady is Posicion - (NumOfColumns+1),
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %2°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        Posicion_ady is Posicion-NumOfColumns,
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %3°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        X is (Posicion mod NumOfColumns) - (NumOfColumns-1),
+        X \= 0, 
+        Posicion_ady is Posicion-(NumOfColumns-1),
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %4°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        X is (Posicion mod NumOfColumns),
+        X \= 0,  
+        Posicion_ady is Posicion-1,
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %5°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        X is (Posicion mod NumOfColumns) - (NumOfColumns-1),
+        X \= 0, 
+        Posicion_ady is Posicion+1,
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %6°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        X is (Posicion mod NumOfColumns),
+        X \= 0,
+        Posicion_ady is Posicion+(NumOfColumns-1),
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %7°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        Posicion_ady is Posicion+NumOfColumns,
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    %8°
+    ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
+        X is (Posicion mod NumOfColumns) - (NumOfColumns-1),
+        X \= 0, 
+        Posicion_ady is Posicion+(NumOfColumns+1),
+        comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
+    
+    comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If):-
+        If =:= 1,
+        nth0(Posicion,Grid,Elem),
+        nth0(Posicion_ady,Grid,Ady),
+        not(member(Posicion_ady,PathActual)),
+        not(member(Posicion_ady,Adyacentes)),
+        comprobar_iguales_o_dobles(PathActual,Elem,Ady),
+        append(Adyacentes,[Posicion_ady],AdyacentesResultado).
+    
+      comprobar_posicion(_,_,Posicion_ady,_,Adyacentes,AdyacentesResultado,If):-
+        If =:=0,
+        not(member(Posicion_ady,Adyacentes)),
+        append(Adyacentes,[Posicion_ady],AdyacentesResultado).
+               
+    
+    controlar_suma_valor(Grid,H,ResultadoParcial,ValorCheck):-
+        length(H,Cant),
+        Cant > 1,
+        suma_valores(Grid,H,Suma), 
+        truncar_a_potencia_de_2(Suma,SumaRedondeada),
+        SumaRedondeada=ValorCheck,
+        append([H],[SumaRedondeada],ResultadoParcial).
+        
+    son_iguales(X,X).
+    
     comprobar_iguales_o_dobles(_,X,Y):- (X=:=Y),!,true.
     comprobar_iguales_o_dobles(Path,X,Y):-(comprobarLong(Path,Longitud),Longitud >0),!,X*2 =:= Y.
     
     comprobarLong(Path,Longitud):-length(Path, Longitud).
     
+    % Predicado que calcula la suma de todos los elementos de una lista. 
+    suma_valores([], [], 0).
+    suma_valores([X|L], [P|Ps], Suma) :-
+           nth0(P, [X|L], Elemento), 
+        suma_valores([X|L], Ps, Suma0), 
+        Suma is Suma0 + Elemento,!.
+    suma_valores([_|L], P, Suma) :-
+        suma_valores(L, P, Suma).
+    
+    truncar_a_potencia_de_2(N, Resultado) :-
+        Exponente is ceiling(log(N) / log(2)), 
+        Resultado is 2 ** Exponente.
+
+    join_maximos_iguales(Grid, NumOfColumns, Path, RGrids):-
+        sort(Path,PosicionesOrdenadas),
+        convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
+        suma_valores(Grid,PosicionesOrdenadas,Suma),
+        ultimo(Ultimo,Path),
+        truncar_a_potencia_de_2(Suma, Resultado),
+        convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado),
+        obtener_lista_columnas(GridSuma,NumOfColumns,ListaColumnas),
+        obtener_cant_filas(Grid,NumOfColumns,CantidadFilas),
+        renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
+        intercalar(ListaRenovada,[],GridFinal),
+        RGrids=[GridSuma,GridFinal],!.
