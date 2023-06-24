@@ -9,18 +9,18 @@
  * A partir de un path dado, calcula la suma final truncando a una potencia de dos y retorna una nueva grid. 
 */	
 join(Grid, NumOfColumns, Path, RGrids):-
-  lista_de_posiciones(Path,NumOfColumns,Posiciones),
-  sort(Posiciones,PosicionesOrdenadas),
-  convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
-  suma_valores(Grid,PosicionesOrdenadas,Suma),
-  ultimo(Ultimo,Posiciones),
-  truncar_a_potencia_de_2(Suma, Resultado),
-  convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado),
-  obtener_lista_columnas(GridSuma,NumOfColumns,ListaColumnas),
-  obtener_cant_filas(Grid,NumOfColumns,CantidadFilas),
-  renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
-  intercalar(ListaRenovada,[],GridFinal),
-  RGrids=[GridSuma,GridFinal].
+    lista_de_posiciones(Path,NumOfColumns,Posiciones),
+    sort(Posiciones,PosicionesOrdenadas),
+    convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
+    suma_valores(Grid,PosicionesOrdenadas,Suma),
+    ultimo(Ultimo,Posiciones),
+    truncar_a_potencia_de_2(Suma, Resultado),
+    convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado),
+    obtener_lista_columnas(GridSuma,NumOfColumns,ListaColumnas),
+    obtener_cant_filas(Grid,NumOfColumns,CantidadFilas),
+    renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
+    intercalar(ListaRenovada,[],GridFinal),
+    RGrids=[GridSuma,GridFinal].
 
 % Predicado que retorna el ultimo elemento de una lista.     
 ultimo(X, [X]).
@@ -29,44 +29,44 @@ ultimo(X, [_|T]) :- ultimo(X, T).
 % Predicado que dado un path de posiciones X,Y, convierte y retorna las coordenadas X,Y en posiciones de una lista. 
 lista_de_posiciones([],_,[]).
 lista_de_posiciones([[X,Y]|Resto],NumOfColumns,[P|Posiciones]):-
-  P is Y+X*NumOfColumns,
-  lista_de_posiciones(Resto,NumOfColumns,Posiciones).
+    P is Y+X*NumOfColumns,
+    lista_de_posiciones(Resto,NumOfColumns,Posiciones).
 
             
 % Predicado para convertir las Posiciones de una lista en 0.
 convertir_en_valorX(Lista, Posiciones, NuevaLista,Valor) :-
-  convertir_en_valorX_aux(Lista, Posiciones, 0, NuevaLista,Valor).
+    convertir_en_valorX_aux(Lista, Posiciones, 0, NuevaLista,Valor).
 
 convertir_en_valorX_aux(Lista, [], _, Lista,_).
 convertir_en_valorX_aux([_|Resto], [Posicion|RestoPosiciones], PosicionActual, [Valor|RestoNuevaLista],Valor) :-
-  PosicionActual =:= Posicion,
-  NuevaPosicionActual is PosicionActual + 1,
-  convertir_en_valorX_aux(Resto, RestoPosiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
+    PosicionActual =:= Posicion,
+    NuevaPosicionActual is PosicionActual + 1,
+    convertir_en_valorX_aux(Resto, RestoPosiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 convertir_en_valorX_aux([Elemento|Resto], Posiciones, PosicionActual, [Elemento|RestoNuevaLista],Valor) :-
-  \+ member(PosicionActual, Posiciones),
-  NuevaPosicionActual is PosicionActual + 1,
-  convertir_en_valorX_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
+    \+ member(PosicionActual, Posiciones),
+    NuevaPosicionActual is PosicionActual + 1,
+    convertir_en_valorX_aux(Resto, Posiciones, NuevaPosicionActual, RestoNuevaLista,Valor).
 
 /**
  *Predicado que dada una Lista y un numero de columnas, retorna una lista con X listas
 *donde X es el numero de columnas y cada sublista es una columna de la matriz.
 */
 obtener_lista_columnas(Grilla,NumOfColumns,ListaColumnas):-
-  crear_lista_columnas(NumOfColumns,ListaVacia),
-  obtener_X_Primeros(Grilla,NumOfColumns,X_Primeros),
-  insertar_en_columnas(X_Primeros,ListaVacia,ListaColumnas).
+    crear_lista_columnas(NumOfColumns,ListaVacia),
+    obtener_X_Primeros(Grilla,NumOfColumns,X_Primeros),
+    insertar_en_columnas(X_Primeros,ListaVacia,ListaColumnas).
 
 % Predicado que inserta elementos de una lista, en una lista de sublistas(columnas)
 insertar_en_columnas([], Resultado, Resultado).
 insertar_en_columnas([X|Xs], L, Resultado):-
-  insertar_elementos(X, L, ListaAux),
-  insertar_en_columnas(Xs, ListaAux, Resultado).
+    insertar_elementos(X, L, ListaAux),
+    insertar_en_columnas(Xs, ListaAux, Resultado).
 
 %Inserta elementos en una lista de sublistas.
 insertar_elementos([], Ls, Ls).
 insertar_elementos([X|Xs], [L|Ls], [L2|Ls2]) :-
-  append(L, [X], L2),
-  insertar_elementos(Xs, Ls, Ls2).
+    append(L, [X], L2),
+    insertar_elementos(Xs, Ls, Ls2).
 
 % Predicado que crea una lista de sublistas.
 crear_lista_columnas(0, []).
@@ -78,32 +78,32 @@ crear_lista_columnas(NumOfColumns, [ [] | ListaColumnas ]) :-
 % Predicado que retorna los X primeros elementos de una lista.
 obtener_X_Primeros([], _, []).
 obtener_X_Primeros([H|T], NumOfColumns, [Col|Cols]) :-
-  length(Col, NumOfColumns),
-  append(Col, Rest, [H|T]),
-  obtener_X_Primeros(Rest, NumOfColumns, Cols).
+    length(Col, NumOfColumns),
+    append(Col, Rest, [H|T]),
+    obtener_X_Primeros(Rest, NumOfColumns, Cols).
 
 % Predicado que actualiza los valores de una lista.
 renovar_Columnas([],[],_).
 renovar_Columnas([L|Ls],[L2|Ls2],CantFilas):-
-  eliminar_ceros(L,X),
-  completar_lista(X,L2,CantFilas),
-  renovar_Columnas(Ls,Ls2,CantFilas).
+    eliminar_ceros(L,X),
+    completar_lista(X,L2,CantFilas),
+    renovar_Columnas(Ls,Ls2,CantFilas).
 
 % Predicado que completa a la lista entregada con numeros aleatorios que son potencia de 2.
 completar_lista(Lista, ListaCompleta,CantFilas) :-
-  length(Lista, Longitud),
-  Longitud >= CantFilas,
-  ListaCompleta = Lista.
+    length(Lista, Longitud),
+    Longitud >= CantFilas,
+    ListaCompleta = Lista.
 completar_lista(Lista, ListaCompleta,CantFilas) :-
-  length(Lista, Longitud),
-  Longitud < CantFilas,
-  generar_numero_aleatorio(Num),
-  completar_lista([Num|Lista], ListaCompleta,CantFilas).
+    length(Lista, Longitud),
+    Longitud < CantFilas,
+    generar_numero_aleatorio(Num),
+    completar_lista([Num|Lista], ListaCompleta,CantFilas).
 
 % Predicado que retorna un numero aleatorio potencia de 2. 
 generar_numero_aleatorio(N) :-
-  random_between(1,6, R),
-  N is 2^R.
+    random_between(1,6, R),
+    N is 2^R.
 
 % Predicado que dada una lista de numeros, elimina todas las apariciones de ceros de la misma.  
 eliminar_ceros([], []).
@@ -112,184 +112,187 @@ eliminar_ceros([H|T], [H|L]) :- H \= 0, eliminar_ceros(T, L).
 
 % Predicado que retorna una lista conteniendo todas las columnas intercaladas.
 intercalar([], Res, R):-
-  reverse(Res,R).
+    reverse(Res,R).
 intercalar([[]|Xs],Res,R) :-
-  intercalar(Xs,Res,R) .
-  intercalar(L, R1, R) :-
-  L \= [],
-  tomar_cabeceras(L, Cabeceras),
-  reverse(Cabeceras,Cabeceras_Inv),
-  quitar_cabeceras(L,Resto),
-  concatenar(Cabeceras_Inv, R1, RAUX),
-  intercalar(Resto, RAUX, R).
+    intercalar(Xs,Res,R) .
+    intercalar(L, R1, R) :-
+    L \= [],
+    tomar_cabeceras(L, Cabeceras),
+    reverse(Cabeceras,Cabeceras_Inv),
+    quitar_cabeceras(L,Resto),
+    concatenar(Cabeceras_Inv, R1, RAUX),
+    intercalar(Resto, RAUX, R).
 
 %Predicado que retorna las cabeceras de una lista
 tomar_cabeceras([], []).
 tomar_cabeceras([[X|_]|Ls], [X|Rs]) :-
-  tomar_cabeceras(Ls, Rs).
+    tomar_cabeceras(Ls, Rs).
 
 %Predicado que elimina las cabeceras de una lista
 quitar_cabeceras([], []).
 quitar_cabeceras([[_|Xs]|Ls], [Xs|Rs]) :-
-  quitar_cabeceras(Ls, Rs).
+    quitar_cabeceras(Ls, Rs).
 
 %Predicado que concatena dos listas
 concatenar([], L, L).
 concatenar([X|L1], L2, [X|L3]) :-
-  concatenar(L1, L2, L3).
+    concatenar(L1, L2, L3).
 
 %Predicado que retorna la cantidad de filas de la matriz.
 obtener_cant_filas(Grid, NumColumnas, NumFilas) :-
-  length(Grid, Longitud),
-  NumFilas is Longitud // NumColumnas.    
+    length(Grid, Longitud),
+    NumFilas is Longitud // NumColumnas.    
 
 
 %Preciado que retorna una grid con todos los caminos adyacentes calculados.
 booster(Grid,NumOfColumns,RGrids):-
-  adyacentes(0,Grid,NumOfColumns,[],[],ListaARetornar),
-  agrupar_sublistas(ListaARetornar,[],ListaResultado),
-  join_de_sublistas(Grid,NumOfColumns,ListaResultado,GridBooster),
+    adyacentes(0,Grid,NumOfColumns,[],[],ListaARetornar),
+    agrupar_sublistas(ListaARetornar,[],ListaResultado),
+    join_de_sublistas(Grid,NumOfColumns,ListaResultado,GridBooster),
 
-  obtener_lista_columnas(GridBooster,NumOfColumns,ListaColumnas),
-  obtener_cant_filas(GridBooster,NumOfColumns,CantidadFilas),
-  renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
-  intercalar(ListaRenovada,[],GridFinal),
-  RGrids=[GridBooster,GridFinal].
+    obtener_lista_columnas(GridBooster,NumOfColumns,ListaColumnas),
+    obtener_cant_filas(GridBooster,NumOfColumns,CantidadFilas),
+    renovar_Columnas(ListaColumnas,ListaRenovada,CantidadFilas),
+    intercalar(ListaRenovada,[],GridFinal),
+    RGrids=[GridBooster,GridFinal].
 
 % Predicado que para cada sublista de una lista calcula la suma del camino.
 join_de_sublistas(X,_,[],X).
 join_de_sublistas(Grid,NumOfColumns,[L|Resto],RGrids):-
-  join_booster(Grid,NumOfColumns,L,GridSuma),
-  join_de_sublistas(GridSuma,NumOfColumns,Resto,RGrids).
+    join_booster(Grid,NumOfColumns,L,GridSuma),
+    join_de_sublistas(GridSuma,NumOfColumns,Resto,RGrids).
 
 % Predicado que convierte en cero el camino y coloca en el ultimo lugar la suma resultante.
 join_booster(Grid, _, Lista, GridSuma):-
-  sort(Lista,PosicionesOrdenadas),
-  convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
-  suma_valores(Grid,PosicionesOrdenadas,Suma),
-  ultimo(Ultimo,Lista),
-  truncar_a_potencia_de_2(Suma, Resultado),
-  convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado).
+    sort(Lista,PosicionesOrdenadas),
+    convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
+    suma_valores(Grid,PosicionesOrdenadas,Suma),
+    ultimo(Ultimo,Lista),
+    truncar_a_potencia_de_2(Suma, Resultado),
+    convertir_en_valorX(GridEliminados,[Ultimo],GridSuma,Resultado).
 
 %Obtiene todos los pares adyacentes iguales para todos los elementos de la matriz. 
 adyacentes(Pos, Grid, _,_, ListaPath, ListaRetornar) :-
-  length(Grid, Length),
-  Pos >= Length,
-  ListaRetornar = ListaPath.
-  adyacentes(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath,ListaRetornar):-
-  obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados),
-  append(ListaPath,Path,ListaNueva),
-  PosNueva is Pos+1,
-  append(ListaVisitados,[Pos],ListaVisitadosN),
-  adyacentes(PosNueva,Grid,NumOfColumns,ListaVisitadosN,ListaNueva,ListaRetornar).
+    length(Grid, Length),
+    Pos >= Length,
+    ListaRetornar = ListaPath.
+    adyacentes(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath,ListaRetornar):-
+    obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados),
+    append(ListaPath,Path,ListaNueva),
+    PosNueva is Pos+1,
+    append(ListaVisitados,[Pos],ListaVisitadosN),
+    adyacentes(PosNueva,Grid,NumOfColumns,ListaVisitadosN,ListaNueva,ListaRetornar).
 
 %Predicado que retorna todos los elementos adyacentes a una posicion.
 obtener_adyacentes(Pos,Grid,NumOfColumns,Path,ListaVisitados):-
-  findall(X,(ady(Pos,Grid,NumOfColumns,ListaVisitados,X)),Path).
+    findall(X,(ady(Pos,Grid,NumOfColumns,ListaVisitados,X)),Path).
 
 %Caso Izquierda Arriba 1°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  X is (Pos mod NumOfColumns),
-  X \= 0, 
-  Posicion_ady is Pos-(NumOfColumns+1),
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)),
-  append([Pos,Posicion_ady],[],ListaPath).
+    X is (Pos mod NumOfColumns),
+    X \= 0, 
+    Posicion_ady is Pos-(NumOfColumns+1),
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)),
+    append([Pos,Posicion_ady],[],ListaPath).
 
 %Caso Arriba 2°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  Posicion_ady is Pos-NumOfColumns,
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    Posicion_ady is Pos-NumOfColumns,
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
 
 %Caso Derecha Arriba 3°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  X is (Pos mod NumOfColumns) - (NumOfColumns-1),
-  X \= 0, 
-  Posicion_ady is Pos-(NumOfColumns-1),
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    X is (Pos mod NumOfColumns) - (NumOfColumns-1),
+    X \= 0, 
+    Posicion_ady is Pos-(NumOfColumns-1),
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
 %Caso Izquierda 4°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  X is (Pos mod NumOfColumns),
-  X \= 0,  
-  Posicion_ady is Pos-1,
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    X is (Pos mod NumOfColumns),
+    X \= 0,  
+    Posicion_ady is Pos-1,
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
 
 %Caso Derecha 5°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  X is (Pos mod NumOfColumns) - (NumOfColumns-1),
-  X \= 0, 
-  Posicion_ady is Pos+1,
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    X is (Pos mod NumOfColumns) - (NumOfColumns-1),
+    X \= 0, 
+    Posicion_ady is Pos+1,
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
 %Caso Izquierda Abajo 6°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  X is (Pos mod NumOfColumns),
-  X \= 0,
-  Posicion_ady is Pos+(NumOfColumns-1),
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    X is (Pos mod NumOfColumns),
+    X \= 0,
+    Posicion_ady is Pos+(NumOfColumns-1),
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
 %Caso Abajo 7°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  Posicion_ady is Pos+NumOfColumns,
-  nth0(Pos,Grid,Elem), 
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady, 
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    Posicion_ady is Pos+NumOfColumns,
+    nth0(Pos,Grid,Elem), 
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady, 
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
 %Caso Derecha Abajo 8°
 ady(Pos,Grid,NumOfColumns,ListaVisitados,ListaPath):-
-  X is (Pos mod NumOfColumns) - (NumOfColumns-1),
-  X \= 0, 
-  Posicion_ady is Pos+(NumOfColumns+1),
-  nth0(Pos,Grid,Elem),
-  nth0(Posicion_ady,Grid,Ady),
-  Elem =:= Ady,
-  not(member(Posicion_ady, ListaVisitados)), 
-  append([Pos,Posicion_ady],[],ListaPath).
+    X is (Pos mod NumOfColumns) - (NumOfColumns-1),
+    X \= 0, 
+    Posicion_ady is Pos+(NumOfColumns+1),
+    nth0(Pos,Grid,Elem),
+    nth0(Posicion_ady,Grid,Ady),
+    Elem =:= Ady,
+    not(member(Posicion_ady, ListaVisitados)), 
+    append([Pos,Posicion_ady],[],ListaPath).
 
-
+%Predicado que dada dos sublistas, las agrupa formando una sola.
 agrupar_sublistas(ListaActual,ListaModificada,ListaActual):-
     ListaActual=ListaModificada.
 agrupar_sublistas(ListaActual,_,ListaResultado):-
     agrupar_iguales(ListaActual,[],[],ListaRet),
     agrupar_sublistas(ListaRet,ListaActual,ListaResultado).
 
-    agrupar_iguales([],_,X,X).
+agrupar_iguales([],_,X,X).
+%Predicado que agrupa aquellas lista que contengan elementos comunes.
 agrupar_iguales([H|T],ListaVisitados,ListaResultado,ListaRetornar):-
-        not(algun_elemento_en_comun(H,ListaVisitados)),
-        existen_iguales(H,T,Resul),
-        append(ListaResultado,[Resul],NuevaListaResultado),
-        append(ListaVisitados,Resul,NuevaListaVisitados),
-        agrupar_iguales(T,NuevaListaVisitados,NuevaListaResultado,ListaRetornar).
-    agrupar_iguales([_|T],ListaVisitados,ListaResultado,ListaRetornar):-
-        agrupar_iguales(T,ListaVisitados,ListaResultado,ListaRetornar).
-            
+    not(algun_elemento_en_comun(H,ListaVisitados)),
+    existen_iguales(H,T,Resul),
+    append(ListaResultado,[Resul],NuevaListaResultado),
+    append(ListaVisitados,Resul,NuevaListaVisitados),
+    agrupar_iguales(T,NuevaListaVisitados,NuevaListaResultado,ListaRetornar).
+
+agrupar_iguales([_|T],ListaVisitados,ListaResultado,ListaRetornar):-
+    agrupar_iguales(T,ListaVisitados,ListaResultado,ListaRetornar).
+
+%Predicado que contrla si existen elementos en comun entre las sublistas de la lista pasada por parametro.         
 existen_iguales(Nueva,[],Nueva).
 
 existen_iguales(L,[H|T],ListaAux):-
@@ -324,10 +327,9 @@ posiciones_a_coordenadas_XY([Position|Positions], Rows, Cols, [[X,Y]|Coordinates
 
 
 
-generar_lista_de_posiciones_de_grid_completa(0, X,X).
-
 %Predicado que genera una lista de posiciones del 0 al CantidadElementos-1.
 %Ejemplo: Para la Grid de inicio genera una lista del 0..39.
+generar_lista_de_posiciones_de_grid_completa(0, X,X).
 generar_lista_de_posiciones_de_grid_completa(N, List,Resultado) :-
     N > 0,
     N1 is N - 1,
@@ -345,7 +347,7 @@ ayuda_movida_maxima(Grid,NumOfColumns,Resultado):-
 
 obtener_path_maximo([],_,_,ListaPath,X):-
     path_maximo(ListaPath,[0],[X|_]),!.
-
+%Predicado que obtiene todos los caminos de la GRID y controla aquel que tenga la mayor suma.
 obtener_path_maximo([P|Ps],Grid,NumOfColumns,ListaPath,Resultado):-
     obtener_adyacentes(P,Grid,NumOfColumns,[],[],Adyacentes,1),   
     findall(X,adyancentes_recursivo(P,Grid,NumOfColumns,[P],Adyacentes,X),PathSuma),
@@ -354,7 +356,8 @@ obtener_path_maximo([P|Ps],Grid,NumOfColumns,ListaPath,Resultado):-
     
     
 path_maximo([],X,X).
-
+%Predicado que dada una lista de caminos, retorna aquel con mayor suma.
+%En caso de haber mas de un camino con la misma suma, retorna el primero.
 path_maximo([X|Xs],Maximo,Res):-
     ultimo_elemento(X,SumaAct),
     ultimo_elemento(Maximo,SumaMax),
@@ -370,11 +373,11 @@ ultimo_elemento(List, Last) :-
 adyancentes_recursivo(_,Grid,_,PathActual,[],PathSuma):-
     controlar_suma(Grid,PathActual,PathSuma),!.
 
+%Predicado que recorre todos los caminos adyacentes posibles y cuando encuentra un maximal calcula su suma. 
 adyancentes_recursivo(_,Grid,NumOfColumns,PathActual,[X|_],PathSuma):-
     append(PathActual,[X],NuevoPath),
     obtener_adyacentes(X,Grid,NumOfColumns,[],NuevoPath,NuevosAdyacentes,1),
     adyancentes_recursivo(X,Grid,NumOfColumns,NuevoPath,NuevosAdyacentes,PathSuma).
-
 
 adyancentes_recursivo(Posicion,Grid,NumOfColumns,PathActual,[_|Xs],PathSuma):-
     length(Xs,Res),
@@ -382,7 +385,7 @@ adyancentes_recursivo(Posicion,Grid,NumOfColumns,PathActual,[_|Xs],PathSuma):-
     adyancentes_recursivo(Posicion,Grid,NumOfColumns,PathActual,Xs,PathSuma).
 
 primer_elemento([X|_], X).
-        
+%Predicado que retorna la suma de un path.         
 controlar_suma(Grid,H,ResultadoParcial):-
     length(H,Cant),
     Cant > 1,
@@ -393,7 +396,8 @@ controlar_suma(Grid,H,ResultadoParcial):-
 obtener_bloques_posibles([],X,Resul):-
     sort(X,Aux),
     reverse(Aux,Resul).
-
+%Predicado que retorna los bloques disponibles de la GRID ordenados de mayor a menor.
+%Ejemplo: L:[64,32,16,8,4,2]
 obtener_bloques_posibles([X|Xs],ListaBloques,Resul):-
     not(member(X,ListaBloques)),
     append(ListaBloques,[X],NuevaListaBloques),
@@ -402,6 +406,7 @@ obtener_bloques_posibles([X|Xs],ListaBloques,Resul):-
 obtener_bloques_posibles([_|Xs],ListaBloques,Resul):-
     obtener_bloques_posibles(Xs,ListaBloques,Resul).          
 
+%Predicado principal de la funcionalidad, que decanta resposabilidades en los demas predicados. 
 ayuda_maximos_iguales_adyacentes(Grid,NumOfColumns,Path):-
     obtener_bloques_posibles(Grid,[],BloquesPosibles),
     length(Grid,CantElementos),
@@ -416,7 +421,7 @@ buscar_path_valor(Grid,NumOfColumns,_,[],_,ListaCaminos,Path):-
 buscar_path_valor(Grid,NumOfColumns,[_|Bs],[],ListaPosCompleta,_,Path):-
     buscar_path_valor(Grid,NumOfColumns,Bs,ListaPosCompleta,ListaPosCompleta,[],Path),!.
 
-
+%Predicado que retorna el primer path mayor posible que genera un bloque adyacente a otro igual. 
 buscar_path_valor(Grid,NumOfColumns,[B|Bs],[X|Xs],ListaPosCompleta,ListaCaminos,Path):-
     obtener_adyacentes(X,Grid,NumOfColumns,[],[],Adyacentes,1),
     findall(P,obtener_path_valor(X,Grid,NumOfColumns,[X],Adyacentes,P,B),Lista),
@@ -430,7 +435,8 @@ buscar_path_adyacente(_,_,[],X,X):-
 
 buscar_path_adyacente(_,_,[],_,_):-fail.
     
-
+%Predicado que controla si los caminos de la lista parametrizada generan un bloque adyacente a otro igual,
+%luego de aplicar la gravedad.
 buscar_path_adyacente(Grid,NumOfColumns,[[Path|Valor]|_],_,Res):-
     join_maximos_iguales(Grid,NumOfColumns,Path,Grids),
     ultimo_elemento(Grids,GridConGravedad),
@@ -442,6 +448,7 @@ buscar_path_adyacente(Grid,NumOfColumns,[[Path|Valor]|_],_,Res):-
 buscar_path_adyacente(Grid,NumOfColumns,[_|Ls],Resultado,Res):-
     buscar_path_adyacente(Grid,NumOfColumns,Ls,Resultado,Res),!.
 
+%Predicado que controla si es igual a un adyacente.
 es_adyacente_a_uno_igual(Grid,[X|_],Valor):-
     nth0(X,Grid,Elem),
     nth0(0,Valor,Val),
@@ -450,6 +457,7 @@ es_adyacente_a_uno_igual(Grid,[X|_],Valor):-
 es_adyacente_a_uno_igual(Grid,[_|Xs],Valor):-
     es_adyacente_a_uno_igual(Grid,Xs,Valor).
 
+%Predicado que recomputa la nueva posicion del ultimo elemento del path aplicando gravedad.
 posicion_gravedad(Path,NumOfColumns,PosicionNueva):-
     ultimo_elemento(Path,Ultimo),
     Resto is (Ultimo mod NumOfColumns),
@@ -457,7 +465,8 @@ posicion_gravedad(Path,NumOfColumns,PosicionNueva):-
     PosicionNueva is (Ultimo + (Cantidad*NumOfColumns)).
 
 controlar_resto([],_,_,_,X,X).    
-    
+
+%Predicado que retorna la cantidad de elementos del path que pertencen a la misma columna que su ultima posicion.    
 controlar_resto([P|Ps],NumOfColumns,Pos,Resto,Cantidad,Res):-
     P > Pos,
     X  is (P mod NumOfColumns),
@@ -468,6 +477,7 @@ controlar_resto([P|Ps],NumOfColumns,Pos,Resto,Cantidad,Res):-
 controlar_resto([_|Ps],NumOfColumns,Pos,Resto,Cantidad,Res):-
     controlar_resto(Ps,NumOfColumns,Pos,Resto,Cantidad,Res).
 
+%Predicado que obtiene los adyacentes para una posicion y retorna el primer path que sume ese "valor"
 obtener_path_valor(_,Grid,_,PathActual,[],PathSuma,Valor):-
     controlar_suma_valor(Grid,PathActual,PathSuma,Valor).
 
@@ -476,10 +486,10 @@ obtener_path_valor(_,Grid,NumOfColumns,PathActual,[X|_],PathSuma,Valor):-
     obtener_adyacentes(X,Grid,NumOfColumns,[],NuevoPath,NuevosAdyacentes,1),
     obtener_path_valor(X,Grid,NumOfColumns,NuevoPath,NuevosAdyacentes,PathSuma,Valor).
 
-
 obtener_path_valor(Posicion,Grid,NumOfColumns,PathActual,[_|Xs],PathSuma,Valor):-
     obtener_path_valor(Posicion,Grid,NumOfColumns,PathActual,Xs,PathSuma,Valor).
-        
+
+%Retorna una lista conteniendo todos los nodos adyancentes a la posicion pasada dependiendo del parametro IF.       
 obtener_adyacentes(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If):-
     ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,NuevosAdyacentes,If),
     obtener_adyacentes(Posicion,Grid,NumOfColumns,NuevosAdyacentes,PathActual,AdyacentesResultado,If),!.
@@ -538,6 +548,8 @@ ady_rec(Posicion,Grid,NumOfColumns,Adyacentes,PathActual,AdyacentesResultado,If)
     Posicion_ady is Posicion+(NumOfColumns+1),
     comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If),!.
 
+%Predicado que dado una posicion controla si es igual o el doble que su posicion adyacente
+%Si el parametro If es igual a 1, hace todo el control.
 comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesResultado,If):-
     If =:= 1,
     nth0(Posicion,Grid,Elem),
@@ -546,13 +558,14 @@ comprobar_posicion(Posicion,Grid,Posicion_ady,PathActual,Adyacentes,AdyacentesRe
     not(member(Posicion_ady,Adyacentes)),
     comprobar_iguales_o_dobles(PathActual,Elem,Ady),
     append(Adyacentes,[Posicion_ady],AdyacentesResultado).
-
-    comprobar_posicion(_,_,Posicion_ady,_,Adyacentes,AdyacentesResultado,If):-
+  
+%Si el parametro es 0, solamente realiza una concatenacion de la posicion adyacente.
+comprobar_posicion(_,_,Posicion_ady,_,Adyacentes,AdyacentesResultado,If):-
     If =:=0,
     not(member(Posicion_ady,Adyacentes)),
     append(Adyacentes,[Posicion_ady],AdyacentesResultado).
             
-
+%Predicado que controla 
 controlar_suma_valor(Grid,H,ResultadoParcial,ValorCheck):-
     length(H,Cant),
     Cant > 1,
@@ -563,6 +576,8 @@ controlar_suma_valor(Grid,H,ResultadoParcial,ValorCheck):-
     
 son_iguales(X,X).
 
+%Predicado que si el path es no vacio, chequea si X*2=Y
+%Si el path es vacio chequea si son iguales.
 comprobar_iguales_o_dobles(_,X,Y):- (X=:=Y),!,true.
 comprobar_iguales_o_dobles(Path,X,Y):-(comprobarLong(Path,Longitud),Longitud >0),!,X*2 =:= Y.
 
@@ -577,10 +592,13 @@ suma_valores([X|L], [P|Ps], Suma) :-
 suma_valores([_|L], P, Suma) :-
     suma_valores(L, P, Suma).
 
+%Predicado que redondea a potencia de 2 mas cercana de un numero.
 truncar_a_potencia_de_2(N, Resultado) :-
     Exponente is ceiling(log(N) / log(2)), 
     Resultado is 2 ** Exponente.
 
+%Predicado Join modificado para la funcionalidad de maximos iguales adyancentes.
+%Esta modificacion hace que no se agreguen nuevos bloques aleatorios. 
 join_maximos_iguales(Grid, NumOfColumns, Path, RGrids):-
     sort(Path,PosicionesOrdenadas),
     convertir_en_valorX(Grid,PosicionesOrdenadas,GridEliminados,0),
